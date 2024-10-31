@@ -1,8 +1,8 @@
 # Plugin OpenMC
 Nouveau plugin collaboratif pour un serveur : VOTRE serveur !
 
-<a href="https://github.com/ServerOpenMC/Plugin/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=ServerOpenMC/Plugin" />
+<a href="https://github.com/ServerOpenMC/PluginV2/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=ServerOpenMC/PluginV2" />
 </a>
 
 ## 🤝 Rejoindre le développement.
@@ -13,8 +13,7 @@ Nouveau plugin collaboratif pour un serveur : VOTRE serveur !
 
 Serveur de test : `dev.openmc.fr` (1.21.1 Java Edition)
 
-Serveur de production : `play.openmc.fr` (1.21.1 Java Edition)
-// TODO: Changer production (terme trop "tech")
+Serveur de jeu : `play.openmc.fr` (1.21.1 Java Edition)
 
 ## 📃 License
 Projet sous [GPL-3.0 license](https://choosealicense.com/licenses/gpl-3.0/).
