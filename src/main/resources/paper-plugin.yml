@@ -1,0 +1,14 @@
+name: OpenMC
+version: '2.0.0'
+main: fr.openmc.core.OMCPlugin
+api-version: '1.21.1'
+
+prefix: OMC
+authors: [ La communauté ]
+description: Nouveau plugin d'OpenMC
+website: https://openmc.fr
+
+permissions:
+  omc.commands.*:
+    description: "Donne accès au commandes"
+    default: true

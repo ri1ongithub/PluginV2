@@ -1,0 +1,20 @@
+#####
+# Database
+#####
+database:
+  url: "jdbc:mysql://host:port/openmc"
+  username: ""
+  password: ""
+
+#####
+# Analytics
+#####
+analytics:
+  enabled: true
+
+#####
+# Paramètres pour un environnement de production
+#####
+homepage: "https://openmc.fr/"
+discord: "https://discord.gg/aywen/"
+blog: "https://blog.openmc.fr/"
