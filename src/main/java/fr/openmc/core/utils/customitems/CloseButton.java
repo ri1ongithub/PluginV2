@@ -14,7 +14,7 @@ public class CloseButton extends CustomItem {
 
     private ItemStack format(ItemStack initial) {
         ItemMeta meta = initial.getItemMeta();
-        meta.displayName(Component.text("Fermer").decoration(TextDecoration.ITALIC, false));
+        meta.displayName(Component.translatable("omc.menus.buttons.close").decoration(TextDecoration.ITALIC, false));
         initial.setItemMeta(meta);
         return initial;
     }

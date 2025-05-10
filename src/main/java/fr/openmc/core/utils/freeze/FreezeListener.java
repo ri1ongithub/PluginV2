@@ -51,7 +51,8 @@ public class FreezeListener implements Listener {
 		if (FreezeManager.FROZEN_PLAYERS.contains(player)) {
 			player.setInvulnerable(true);
 			player.sendTitle("§4Vous êtes freeze", "§5Si vous vous déconnectez, vous serez banni");
-			MessagesManager.sendMessage(player, Component.text("§4Vous avez été freeze"), Prefix.OPENMC, MessageType.WARNING, true);
+			MessagesManager.sendMessage(player, Component.translatable("omc.freeze.frozen"),
+					Prefix.OPENMC, MessageType.INFO, true);
 		}
 	}
 

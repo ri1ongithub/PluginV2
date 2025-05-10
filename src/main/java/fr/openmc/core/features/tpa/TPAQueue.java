@@ -76,9 +76,9 @@ public class TPAQueue {
 			if (tpaRequests.get(target.getUniqueId()).contains(player.getUniqueId())) {
 				long requestTime = tpaRequestTime.get(player.getUniqueId());
 				if (System.currentTimeMillis() - requestTime >= 30000) { // 30 secondes
-					MessagesManager.sendMessage(player, Component.text("§4Votre demande de téléportation à §6" + target.getName() + " §4a expiré"), Prefix.OPENMC, MessageType.WARNING, true);
-					MessagesManager.sendMessage(target, Component.text("§3La demande de téléportation de §6" + player.getName() + " §4a expiré"), Prefix.OPENMC, MessageType.INFO, true);
-					
+					MessagesManager.sendMessage(player, Component.translatable("omc.tpa.request.expired.sender", target.getName()), Prefix.OPENMC, MessageType.WARNING, true);
+					MessagesManager.sendMessage(target, Component.translatable("omc.tpa.request.expired.target", player.getName()), Prefix.OPENMC, MessageType.INFO, true);
+
 					removeRequest(player, target);
 				}
 			}

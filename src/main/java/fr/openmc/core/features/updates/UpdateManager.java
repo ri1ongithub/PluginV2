@@ -24,11 +24,10 @@ public class UpdateManager {
         String version = OMCPlugin.getInstance().getDescription().getVersion();
         String milestoneUrl = "https://github.com/ServerOpenMC/PluginV2/releases/";
 
-        message = Component.text("§8§m                                                     §r\n\n§7 Vous jouez actuellement sur la version")
-            .append(Component.text("§d§l " + version).clickEvent(ClickEvent.openUrl(milestoneUrl)))
-            .append(Component.text("§7 du plugin §d§lOpenMC.\n"))
-            .append(Component.text("§f§l Cliquez ici pour voir les changements.").clickEvent(ClickEvent.openUrl(milestoneUrl)))
-            .append(Component.text("\n\n§8§m                                                     §r"));
+        message = Component.text("§8§m                                                     §r\n\n")
+                .append(Component.translatable("omc.update.version", Component.text(version).clickEvent(ClickEvent.openUrl(milestoneUrl))))
+                .append(Component.translatable("omc.update.changes").clickEvent(ClickEvent.openUrl(milestoneUrl)))
+                .append(Component.text("\n\n§8§m                                                     §r"));
 
         long period = 14400 * 20; // 4h
 

@@ -34,12 +34,9 @@ public class QuestMoneyReward implements QuestReward {
     @Override
     public void giveReward(Player player) {
         EconomyManager.getInstance().addBalance(player.getUniqueId(), amount);
-        MessagesManager.sendMessage(
-                player,
-                Component.text("§aVous avez reçu §e" + amount + EconomyManager.getEconomyIcon()),
-                Prefix.QUEST,
-                MessageType.SUCCESS,
-                false
-        );
+        MessagesManager.sendMessage(player, Component.translatable("omc.commands.money.add.target",
+                        Component.text(EconomyManager.getInstance().getFormattedNumber(amount)),
+                        Component.text(EconomyManager.getEconomyIcon())),
+                Prefix.QUEST, MessageType.SUCCESS, false);
     }
 }

@@ -4,6 +4,7 @@ import dev.lone.itemsadder.api.CustomStack;
 import dev.lone.itemsadder.api.ItemsAdder;
 import fr.openmc.api.menulib.Menu;
 import fr.openmc.api.menulib.utils.ItemBuilder;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -19,9 +20,9 @@ public class MenuUtils {
 		
 		ArrayList<ItemBuilder> navigationButtons = new ArrayList<>();
 		
-		String previousName = "§cPrécédent";
-		String cancelName = "§cAnnuler";
-		String nextName = "§aSuivant";
+		Component previousName = Component.translatable("omc.menus.buttons.previous");
+		Component cancelName = Component.translatable("omc.menus.buttons.cancel");
+		Component nextName = Component.translatable("omc.menus.buttons.next");
 		
 		for (CustomStack customStack : ItemsAdder.getAllItems("_iainternal")) {
 			if (customStack.getNamespacedID().equals("_iainternal:icon_back_orange")) {
@@ -48,9 +49,9 @@ public class MenuUtils {
 	 * @param name The name
 	 * @return The ItemBuilder with the name set
 	 */
-	private static ItemBuilder itemBuilderSetName(ItemBuilder itemBuilder, String name) {
+	private static ItemBuilder itemBuilderSetName(ItemBuilder itemBuilder, Component name) {
 		ItemMeta itemMeta = itemBuilder.getItemMeta();
-		itemMeta.setDisplayName(name);
+		itemMeta.displayName(name);
 		itemBuilder.setItemMeta(itemMeta);
 		
 		return itemBuilder;

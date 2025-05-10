@@ -31,7 +31,7 @@ public class JoinMessageListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         final Player player = event.getPlayer();
 
-        MessagesManager.sendMessage(player, Component.text("Bienvenue sur OpenMC !"), Prefix.OPENMC, MessageType.INFO, false);
+        MessagesManager.sendMessage(player, Component.translatable("omc.player.join.welcome"), Prefix.OPENMC, MessageType.INFO, false);
 
         TabList.getInstance().updateTabList(player);
 
@@ -39,7 +39,7 @@ public class JoinMessageListener implements Listener {
             for (UUID friendUUID : friendsUUIDS) {
                 final Player friend = player.getServer().getPlayer(friendUUID);
                 if (friend != null && friend.isOnline()) {
-                    MessagesManager.sendMessage(friend, Component.text("§aVotre ami §r" + "§r" + LuckPermsAPI.getFormattedPAPIPrefix(player) + player.getName() +" §as'est connecté(e)"), Prefix.FRIEND, MessageType.NONE, true);
+                    MessagesManager.sendMessage(friend, Component.translatable("omc.player.join.friend_joined", LuckPermsAPI.getFormattedPAPIPrefix(player) + player.getName()), Prefix.FRIEND, MessageType.NONE, true);
                 }
             }
         }).exceptionally(throwable -> {
@@ -54,8 +54,8 @@ public class JoinMessageListener implements Listener {
                     int pendingRewardsNumber = quest.getPendingRewardTiers(player.getUniqueId()).size();
                     Bukkit.getScheduler().runTask(OMCPlugin.getInstance(), () -> {
                         MessagesManager.sendMessage(player,
-                                Component.text("§aVous avez " + pendingRewardsNumber + " récompense(s) de quête en attente.")
-                                        .append(Component.text(" §6Cliquez ici pour les récupérer."))
+                                Component.translatable("omc.player.join.quest.pending_rewards", Component.text(pendingRewardsNumber))
+                                                .append(Component.translatable("omc.player.join.quest.pending_rewards.click_here"))
                                                 .clickEvent(ClickEvent.runCommand("/quest")),
                                 Prefix.QUEST,
                                 MessageType.INFO,
@@ -90,7 +90,7 @@ public class JoinMessageListener implements Listener {
             for (UUID friendUUID : friendsUUIDS) {
                 final Player friend = player.getServer().getPlayer(friendUUID);
                 if (friend != null && friend.isOnline()) {
-                    MessagesManager.sendMessage(friend, Component.text("§cVotre ami §e" + "§r" + LuckPermsAPI.getFormattedPAPIPrefix(player) + player.getName() +" §cs'est déconnecté(e)"), Prefix.FRIEND, MessageType.NONE, true);
+                    MessagesManager.sendMessage(friend, Component.translatable("omc.player.leave.friend_left", Component.text(LuckPermsAPI.getFormattedPAPIPrefix(player) + player.getName())), Prefix.FRIEND, MessageType.NONE, true);
                 }
             }
         }).exceptionally(throwable -> {

@@ -12,7 +12,7 @@ import revxrsal.commands.annotation.Optional;
 import revxrsal.commands.bukkit.annotation.CommandPermission;
 
 public class TPDenyCommand {
-	
+
 	/**
 	 * Command to deny a teleportation request
 	 * @param target The player denying the request.
@@ -22,28 +22,27 @@ public class TPDenyCommand {
 	@CommandPermission("omc.commands.tpa")
 	public void tpDeny(Player target, @Optional @Named("player") Player player) {
 		if (!TPAQueue.QUEUE.hasPendingRequest(target)) {
-			MessagesManager.sendMessage(target, Component.text("§4Vous n'avez aucune demande de téléportation en cours"), Prefix.OPENMC, MessageType.ERROR, false);
+			MessagesManager.sendMessage(target, Component.translatable("omc.tpa.no_pending_request"), Prefix.OPENMC, MessageType.ERROR, false);
 			return;
 		}
-		
+
 		if (TPAQueue.QUEUE.hasMultipleRequests(target)) {
 			if (player == null) {
-				MessagesManager.sendMessage(target, Component.text("§4Vous avez plusieurs demandes de téléportation en cours, utilisez §6/tpdeny <joueur>"), Prefix.OPENMC, MessageType.ERROR, false);
+				MessagesManager.sendMessage(target, Component.translatable("omc.tpa.deny_missing_name"), Prefix.OPENMC, MessageType.ERROR, false);
 				return;
 			}
-			
+
 			if (!TPAQueue.QUEUE.getRequesters(target).contains(player)) {
-				MessagesManager.sendMessage(target, Component.text("§4Vous n'avez pas de demande de téléportation de la part de §6" + player.getName()), Prefix.OPENMC, MessageType.ERROR, false);
+				MessagesManager.sendMessage(target, Component.translatable("omc.tpa.deny_unknown_requester", Component.text(player.getName())), Prefix.OPENMC, MessageType.ERROR, false);
 				return;
 			}
 		} else {
 			player = TPAQueue.QUEUE.getRequesters(target).getFirst();
 		}
-		
-		MessagesManager.sendMessage(target, Component.text("§2Vous avez refusé la demande de téléportation de §6" + player.getName()), Prefix.OPENMC, MessageType.SUCCESS, false);
-		MessagesManager.sendMessage(player, Component.text("§6" + target.getName() + " §4a refusé votre demande de téléportation"), Prefix.OPENMC, MessageType.ERROR, false);
-		
+
+		MessagesManager.sendMessage(target, Component.translatable("omc.tpa.deny_success", Component.text(player.getName())), Prefix.OPENMC, MessageType.SUCCESS, false);
+		MessagesManager.sendMessage(player, Component.translatable("omc.tpa.deny_notify_requester", Component.text(target.getName())), Prefix.OPENMC, MessageType.ERROR, false);
+
 		TPAQueue.QUEUE.removeRequest(player, target);
 	}
-	
 }

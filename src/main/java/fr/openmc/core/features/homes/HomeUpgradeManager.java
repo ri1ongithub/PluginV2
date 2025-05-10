@@ -40,15 +40,16 @@ public class HomeUpgradeManager {
         int currentUpgrade = homesManager.getHomeLimit(player.getUniqueId());
         HomeLimits nextUpgrade = getNextUpgrade(getCurrentUpgrade(player));
         Material matAywenite = CustomItemRegistry.getByName("omc_items:aywenite").getBest().getType();
-        if(nextUpgrade != null) {
+
+        if (nextUpgrade != null) {
             double balance = EconomyManager.getInstance().getBalance(player.getUniqueId());
             int price = nextUpgrade.getPrice();
             int aywenite = nextUpgrade.getAyweniteCost();
 
-            if(currentHomes < currentUpgrade) {
+            if (currentHomes < currentUpgrade) {
                 MessagesManager.sendMessage(
                         player,
-                        Component.text("§cVous n'avez pas atteint la limite de homes pour acheter cette amélioration."),
+                        Component.translatable("omc.homes.upgrade.not_reached_limit"),
                         Prefix.HOME,
                         MessageType.ERROR,
                         true
@@ -56,9 +57,15 @@ public class HomeUpgradeManager {
                 return;
             }
 
-            if(balance >= price) {
+            if (balance >= price) {
                 if (!ItemUtils.hasEnoughItems(player, matAywenite, aywenite)) {
-                    MessagesManager.sendMessage(player, Component.text("Vous n'avez pas assez d'§dAywenite §f("+aywenite+ " nécessaires)"), Prefix.HOME, MessageType.ERROR, false);
+                    MessagesManager.sendMessage(
+                            player,
+                            Component.translatable("omc.homes.upgrade.not_enough_aywenite", Component.text(aywenite)),
+                            Prefix.HOME,
+                            MessageType.ERROR,
+                            false
+                    );
                     return;
                 }
 
@@ -68,12 +75,17 @@ public class HomeUpgradeManager {
 
                 int updatedHomesLimit = homesManager.getHomeLimit(player.getUniqueId());
 
-
-                MessagesManager.sendMessage(player, Component.text("§aVous avez amélioré votre limite de homes à " + updatedHomesLimit + " pour " + nextUpgrade.getPrice() + "$ et à §d" + aywenite + " d'Aywenite"), Prefix.HOME, MessageType.SUCCESS, true);
+                MessagesManager.sendMessage(
+                        player,
+                        Component.translatable("omc.homes.upgrade.success", Component.text(updatedHomesLimit), Component.text(price), Component.text(aywenite)),
+                        Prefix.HOME,
+                        MessageType.SUCCESS,
+                        true
+                );
             } else {
                 MessagesManager.sendMessage(
                         player,
-                        Component.text("§cVous n'avez pas assez d'argent pour acheter cette amélioration."),
+                        Component.translatable("omc.homes.upgrade.not_enough_money"),
                         Prefix.HOME,
                         MessageType.ERROR,
                         true
@@ -82,7 +94,7 @@ public class HomeUpgradeManager {
         } else {
             MessagesManager.sendMessage(
                     player,
-                    Component.text("§cVous avez atteint la limite maximale de homes."),
+                    Component.translatable("omc.homes.upgrade.max_limit"),
                     Prefix.HOME,
                     MessageType.ERROR,
                     true

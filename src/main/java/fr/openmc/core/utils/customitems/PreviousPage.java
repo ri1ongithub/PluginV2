@@ -14,7 +14,7 @@ public class PreviousPage extends CustomItem {
 
     private ItemStack format(ItemStack initial) {
         ItemMeta meta = initial.getItemMeta();
-        meta.displayName(Component.text("Page précedente").decoration(TextDecoration.ITALIC, false));
+        meta.displayName(Component.translatable("omc.menus.buttons.previous").decoration(TextDecoration.ITALIC, false));
         initial.setItemMeta(meta);
         return initial;
     }

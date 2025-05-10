@@ -14,7 +14,7 @@ public class NextPage extends CustomItem {
 
     private ItemStack format(ItemStack initial) {
         ItemMeta meta = initial.getItemMeta();
-        meta.displayName(Component.text("Prochaine page").decoration(TextDecoration.ITALIC, false));
+        meta.displayName(Component.translatable("omc.menus.buttons.next").decoration(TextDecoration.ITALIC, false));
         initial.setItemMeta(meta);
         return initial;
     }

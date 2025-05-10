@@ -74,23 +74,47 @@ public class HomeUtil {
     }
 
     public static boolean checkName(Player player, MessagesManager msg, String name) {
-        if(WorldGuardApi.isRegionConflict(player.getLocation())) {
-            MessagesManager.sendMessage(player, Component.text("§cVous ne pouvez pas ajouter un home dans une région protégée !"), Prefix.HOME, MessageType.ERROR, true);
+        if (WorldGuardApi.isRegionConflict(player.getLocation())) {
+            MessagesManager.sendMessage(
+                    player,
+                    Component.translatable("omc.homes.add.region_conflict"),
+                    Prefix.HOME,
+                    MessageType.ERROR,
+                    true
+            );
             return true;
         }
 
-        if(name.length() < 3) {
-            MessagesManager.sendMessage(player, Component.text("§cLe nom de votre home doit contenir au moins 3 caractères !"), Prefix.HOME, MessageType.ERROR, true);
+        if (name.length() < 3) {
+            MessagesManager.sendMessage(
+                    player,
+                    Component.translatable("omc.homes.add.name_too_short"),
+                    Prefix.HOME,
+                    MessageType.ERROR,
+                    true
+            );
             return true;
         }
 
-        if(name.length() > 16) {
-            MessagesManager.sendMessage(player, Component.text("§cLe nom de votre home ne doit pas dépasser 16 caractères !"), Prefix.HOME, MessageType.ERROR, true);
+        if (name.length() > 16) {
+            MessagesManager.sendMessage(
+                    player,
+                    Component.translatable("omc.homes.add.name_too_long"),
+                    Prefix.HOME,
+                    MessageType.ERROR,
+                    true
+            );
             return true;
         }
 
-        if(!name.matches("[a-zA-Z0-9]+")) {
-            MessagesManager.sendMessage(player, Component.text("§cLe nom de votre home ne doit contenir que des caractères alphanumériques !"), Prefix.HOME, MessageType.ERROR, true);
+        if (!name.matches("[a-zA-Z0-9]+")) {
+            MessagesManager.sendMessage(
+                    player,
+                    Component.translatable("omc.homes.add.name_invalid_chars"),
+                    Prefix.HOME,
+                    MessageType.ERROR,
+                    true
+            );
             return true;
         }
 

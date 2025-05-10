@@ -14,7 +14,7 @@ public class AcceptButton extends CustomItem {
 
     private ItemStack format(ItemStack initial) {
         ItemMeta meta = initial.getItemMeta();
-        meta.displayName(Component.text("Accepter").decoration(TextDecoration.ITALIC, false));
+        meta.displayName(Component.translatable("omc.menus.buttons.accept").decoration(TextDecoration.ITALIC, false));
         initial.setItemMeta(meta);
         return initial;
     }

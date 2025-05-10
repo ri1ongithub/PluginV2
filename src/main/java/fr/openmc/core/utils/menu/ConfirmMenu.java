@@ -65,23 +65,23 @@ public class ConfirmMenu extends Menu {
         Player player = getOwner();
 
         List<Component> loreAccept = new ArrayList<>(loreAcceptMsg);
-        loreAccept.add(Component.text("§e§lCLIQUEZ ICI POUR VALIDER"));
+        loreAccept.add(Component.translatable("omc.menus.buttons.accept.lore"));
 
         List<Component> loreDeny = new ArrayList<>(loreDenyMsg);
-        loreDeny.add(Component.text("§e§lCLIQUEZ ICI POUR REFUSER"));
+        loreDeny.add(Component.translatable("omc.menus.buttons.decline.lore"));
 
         ItemStack refuseBtn = CustomItemRegistry.getByName("omc_menus:refuse_btn").getBest();
         ItemStack  acceptBtn = CustomItemRegistry.getByName("omc_menus:accept_btn").getBest();
 
         inventory.put(3, new ItemBuilder(this, refuseBtn, itemMeta -> {
-            itemMeta.displayName(Component.text("§cRefuser"));
+            itemMeta.displayName(Component.translatable("omc.menus.buttons.decline"));
             itemMeta.lore(loreDeny);
         }).setOnClick(event -> {
             deny.run();
         }));
 
         inventory.put(5, new ItemBuilder(this, acceptBtn, itemMeta -> {
-            itemMeta.displayName(Component.text("§aAccepter"));
+            itemMeta.displayName(Component.translatable("omc.menus.buttons.accept"));
             itemMeta.lore(loreAccept);
         }).setOnClick(event -> {
             accept.run();

@@ -137,6 +137,8 @@ public class ScoreboardManager implements Listener {
          * 00 | ip
          */
 
+        // TODO : Traduire le sb en récupérent la langue du joueur avec player.locale();
+
         for (String entry : scoreboard.getEntries()) {
             scoreboard.resetScores(entry);
         }

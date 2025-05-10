@@ -14,7 +14,7 @@ public class SearchButton extends CustomItem {
 
     private ItemStack format(ItemStack initial) {
         ItemMeta meta = initial.getItemMeta();
-        meta.displayName(Component.text("Chercher").decoration(TextDecoration.ITALIC, false));
+        meta.displayName(Component.translatable("omc.menus.buttons.search").decoration(TextDecoration.ITALIC, false));
         initial.setItemMeta(meta);
         return initial;
     }
