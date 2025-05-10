@@ -19,7 +19,6 @@ public class Playtime {
     private void playtime(Player player) {
         long timePlayed = player.getStatistic(Statistic.PLAY_ONE_MINUTE);
 
-        MessagesManager.sendMessage(player, Component.text(OMCPlugin.getTranslationManager().getTranslation("messages.general.playtime",
-                        "fr", "playTime", DateUtils.convertTime(timePlayed))), Prefix.OPENMC, MessageType.INFO, true);
+        MessagesManager.sendMessage(player, Component.translatable("omc.commands.playtime.success", "Playtime : " + DateUtils.convertTime(timePlayed), Component.text(DateUtils.convertTime(timePlayed))), Prefix.OPENMC, MessageType.INFO, true);
     }
 }

@@ -22,7 +22,7 @@ public class Money {
     @DefaultFor("~")
     public void getMoney(CommandSender sender, @Optional OfflinePlayer target) {
         if (sender instanceof Player player && target == null) {
-            MessagesManager.sendMessage(player, Component.text("§aVous avez §e" + EconomyManager.getInstance().getFormattedBalance(player.getUniqueId()) + "§a"), Prefix.OPENMC, MessageType.INFO,  true);
+            MessagesManager.sendMessage(player, Component.translatable("omc.commands.money.success", EconomyManager.getInstance().getFormattedBalance(player.getUniqueId()), Component.text(EconomyManager.getEconomyIcon())), Prefix.OPENMC, MessageType.INFO, true);
         } else {
             if(target == null) {
                 MessagesManager.sendMessage(sender, MessagesManager.Message.MISSINGARGUMENT.getMessage(), Prefix.OPENMC, MessageType.ERROR, true);

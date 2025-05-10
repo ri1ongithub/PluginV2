@@ -101,25 +101,24 @@ public class MessagesManager {
 
     @Getter
     public enum Message {
-        NOPERMISSION(Component.text("§cVous n'avez pas la permission d'exécuter cette commande.")),
-        NOPERMISSION2(Component.text("§cVous n'avez pas le droit de faire ceci")),
-        MISSINGARGUMENT(Component.text("§cVous devez spécifier un argument.")),
-
-        MONEYPLAYERMISSING(Component.text("Tu n'as pas assez d'argent")),
+        NOPERMISSION(Component.translatable("omc.messages.no_permission")),
+        NOPERMISSION2(Component.translatable("omc.messages.no_permission2")),
+        MISSINGARGUMENT(Component.translatable("omc.messages.missing_argument")),
+        MONEYPLAYERMISSING(Component.translatable("omc.messages.money_player_missing")),
 
         // City messages
-        PLAYERNOCITY(Component.text("Tu n'es pas dans une ville")),
-        PLAYERINCITY(Component.text("Tu es déjà dans une ville")),
-        CITYNOFREECLAIM(Component.text("Cette ville n'a pas de claims gratuits")),
+        PLAYERNOCITY(Component.translatable("omc.city.player_no_city")),
+        PLAYERINCITY(Component.translatable("omc.city.player_in_city")),
+        CITYNOFREECLAIM(Component.translatable("omc.city.no_free_claims")),
 
+        PLAYERNOCLAIM(Component.translatable("omc.city.no_claim_permission")),
+        PLAYERNOOWNER(Component.translatable("omc.city.not_mayor")),
+        PLAYERNORENAME(Component.translatable("omc.city.cannot_rename")),
+        PLAYERNOMONEYGIVE(Component.translatable("omc.city.no_money_give")),
+        PLAYERNOMONEYTAKE(Component.translatable("omc.city.no_money_take")),
 
-        PLAYERNOCLAIM(Component.text("Tu n'as pas la permission d'agrandir ta ville")),
-        PLAYERNOOWNER(Component.text("Tu n'as pas la permission car tu n'es pas maire")),
-        PLAYERNORENAME(Component.text("Tu n'as pas la permission de renommer ta ville")),
-        PLAYERNOMONEYGIVE(Component.text("Tu n'as pas la permission de donner de l'argent à ta ville")),
-        PLAYERNOMONEYTAKE(Component.text("Tu n'as pas la permission de prendre de l'argent à ta ville")),
+        CITYNOTFOUND(Component.translatable("omc.city.not_found")),
 
-        CITYNOTFOUND(Component.text("La ville n'existe pas")),
 
         ;
 

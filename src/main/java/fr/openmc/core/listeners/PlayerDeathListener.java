@@ -23,7 +23,14 @@ public class PlayerDeathListener implements Listener {
 
         if (balance>0) {
             withdrawBalance(player.getUniqueId(), balance * LOSS_MONEY);
-            MessagesManager.sendMessage(player, Component.text("Vous venez de mourrir avec §6" + getFormattedSimplifiedNumber(balance) + EconomyManager.getEconomyIcon() + "§f, vous avez perdu §6" + getFormattedSimplifiedNumber(balance * LOSS_MONEY) + EconomyManager.getEconomyIcon() + "\n§8*pensez à mettre votre argent dans la banque*"), Prefix.OPENMC, MessageType.INFO, false);
+
+            MessagesManager.sendMessage(player, Component.translatable(
+                    "omc.player.death.money_lost",
+                    Component.text(getFormattedSimplifiedNumber(balance)),
+                    Component.text(EconomyManager.getEconomyIcon()),
+                    Component.text(getFormattedSimplifiedNumber(balance * LOSS_MONEY))
+            ), Prefix.OPENMC, MessageType.INFO, false);
+
         }
         
         if (event.deathMessage() == null) return;
