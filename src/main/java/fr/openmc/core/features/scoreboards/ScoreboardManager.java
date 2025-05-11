@@ -18,7 +18,10 @@ import fr.openmc.core.utils.messages.Prefix;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -29,6 +32,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 import revxrsal.commands.annotation.Command;
 import revxrsal.commands.annotation.Description;
 import revxrsal.commands.bukkit.annotation.CommandPermission;
@@ -44,12 +48,17 @@ public class ScoreboardManager implements Listener {
     private final boolean canShowLogo = PapiAPI.hasPAPI() && CustomItemRegistry.hasItemsAdder();
     OMCPlugin plugin = OMCPlugin.getInstance();
     private GlobalTeamManager globalTeamManager = null;
+    private TabList tabList = null;
+
+    // Team prefix for line identifiers
+    private static final String TEAM_PREFIX = "omc_sb_line_";
 
     public ScoreboardManager() {
         OMCPlugin.registerEvents(this);
         CommandsManager.getHandler().register(this);
-        Bukkit.getScheduler().runTaskTimer(plugin, this::updateAllScoreboards, 0L, 20L * 5); //20x5 = 5s
+        Bukkit.getScheduler().runTaskTimer(plugin, this::updateAllScoreboards, 0L, 20L * 5); // 20x5 = 5s
         if (LuckPermsAPI.hasLuckPerms()) globalTeamManager = new GlobalTeamManager(playerScoreboards);
+        tabList = new TabList();
     }
 
     @EventHandler
@@ -59,6 +68,9 @@ public class ScoreboardManager implements Listener {
 
         Scoreboard sb = createNewScoreboard(player);
         player.setScoreboard(sb);
+
+        // Update TabList header/footer
+        tabList.updateTabList(player);
     }
 
     @EventHandler
@@ -79,11 +91,15 @@ public class ScoreboardManager implements Listener {
             player.setScoreboard(createNewScoreboard(player));
             updateScoreboard(player);
 
-            MessagesManager.sendMessage(player, Component.text("Scoreboard activé").color(NamedTextColor.GREEN), Prefix.OPENMC, MessageType.INFO, true);
+            MessagesManager.sendMessage(player,
+                    Component.translatable("omc.scoreboard.enabled").color(NamedTextColor.GREEN),
+                    Prefix.OPENMC, MessageType.INFO, true);
         } else {
             disabledPlayers.add(uuid);
             player.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
-            MessagesManager.sendMessage(player, Component.text("Scoreboard désactivé").color(NamedTextColor.RED), Prefix.OPENMC, MessageType.INFO, true);
+            MessagesManager.sendMessage(player,
+                    Component.translatable("omc.scoreboard.disabled").color(NamedTextColor.RED),
+                    Prefix.OPENMC, MessageType.INFO, true);
         }
     }
 
@@ -91,11 +107,21 @@ public class ScoreboardManager implements Listener {
         Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
         Objective objective;
         if (canShowLogo) {
-            objective = scoreboard.registerNewObjective("sb_aywen", "dummy", PlaceholderAPI.setPlaceholders(player, "%img_openmc%"));
+            objective = scoreboard.registerNewObjective("sb_aywen", "dummy",
+                    Component.text(PlaceholderAPI.setPlaceholders(player, "%img_openmc%")));
         } else {
-            objective = scoreboard.registerNewObjective("sb_aywen", "dummy", Component.text("OPENMC").decorate(TextDecoration.BOLD).color(NamedTextColor.LIGHT_PURPLE));
+            objective = scoreboard.registerNewObjective("sb_aywen", "dummy",
+                    Component.translatable("omc.scoreboard.title")
+                            .decorate(TextDecoration.BOLD)
+                            .color(NamedTextColor.LIGHT_PURPLE));
         }
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+
+        // Register all possible teams for line customization
+        for (int i = 0; i < 15; i++) {
+            Team team = scoreboard.registerNewTeam(TEAM_PREFIX + i);
+            team.addEntry(getEntryForScore(i));
+        }
 
         updateScoreboard(player, scoreboard, objective);
         return scoreboard;
@@ -106,6 +132,7 @@ public class ScoreboardManager implements Listener {
             if (disabledPlayers.contains(player.getUniqueId())) continue;
 
             updateScoreboard(player);
+            tabList.updateTabList(player);
         }
     }
 
@@ -126,64 +153,123 @@ public class ScoreboardManager implements Listener {
     }
 
     private void updateScoreboard(Player player, Scoreboard scoreboard, Objective objective) {
-        /*
-         * 07 |
-         * 06 | Username
-         * 05 | City name
-         * 04 | Argent
-         * 03 |
-         * 02 | Nom territoire
-         * 01 |
-         * 00 | ip
-         */
-
-        // TODO : Traduire le sb en récupérent la langue du joueur avec player.locale();
-
+        // Reset scores
         for (String entry : scoreboard.getEntries()) {
             scoreboard.resetScores(entry);
         }
 
+        int line = 11; // Starting line
 
         if (Restart.isRestarting) {
-            objective.getScore("§7").setScore(3);
-            objective.getScore("   ").setScore(2);
-            objective.getScore("§cRedémarrage dans " + DateUtils.convertSecondToTime(Restart.remainingTime)).setScore(2);
-            objective.getScore("   ").setScore(1);
-            objective.getScore("§d      ᴘʟᴀʏ.ᴏᴘᴇɴᴍᴄ.ꜰʀ").setScore(0);
+            // Restart message - translatable version
+            setLine(scoreboard, objective, line--, Component.text("§7")); // Spacer
+            setLine(scoreboard, objective, line--, Component.text("   ")); // Spacer
+
+            Component restartComponent = Component.translatable("omc.scoreboard.restart_countdown",
+                    NamedTextColor.RED,
+                    Component.text(DateUtils.convertSecondToTime(Restart.remainingTime)));
+            setLine(scoreboard, objective, line--, restartComponent);
+
+            setLine(scoreboard, objective, line--, Component.text("   ")); // Spacer
+            setLine(scoreboard, objective, line--, Component.translatable("omc.scoreboard.server_address")
+                    .color(TextColor.fromHexString("#FF55FF"))); // Server address
             return;
         }
 
-        objective.getScore("§7").setScore(11);
-        
-        objective.getScore("§8• §fNom: §7"+player.getName()).setScore(10);
+        // Normal scoreboard - translatable version
+        setLine(scoreboard, objective, line--, Component.text("§7")); // Spacer
 
+        // Username line
+        Component nameLine = Component.translatable("omc.scoreboard.player_name",
+                Component.text("§8• §f"),
+                Component.text("§7" + player.getName()));
+        setLine(scoreboard, objective, line--, nameLine);
+
+        // City line
         City city = CityManager.getPlayerCity(player.getUniqueId());
-        String cityName = city != null ? city.getName() : "Aucune";
-        objective.getScore("§8• §fVille§7: "+cityName).setScore(9);
+        Component cityName = city != null ? Component.text(city.getName()) :
+                Component.translatable("omc.scoreboard.no_city");
+        Component cityLine = Component.translatable("omc.scoreboard.city",
+                Component.text("§8• §f"),
+                Component.text("§7").append(cityName));
+        setLine(scoreboard, objective, line--, cityLine);
 
+        // Balance line
         String balance = EconomyManager.getInstance().getMiniBalance(player.getUniqueId());
-        objective.getScore("§8• §r"+EconomyManager.getEconomyIcon()+" §d"+balance).setScore(8);
+        Component balanceLine = Component.text("§8• §r" + EconomyManager.getEconomyIcon() + " §d" + balance);
+        setLine(scoreboard, objective, line--,  balanceLine);
 
-        objective.getScore("  ").setScore(7);
+        setLine(scoreboard, objective, line--, Component.text("  ")); // Spacer
 
+        // Location line (only in main world)
         if (player.getWorld().getName().equalsIgnoreCase("world")) {
             City chunkCity = CityManager.getCityFromChunk(player.getChunk().getX(), player.getChunk().getZ());
-            String chunkCityName = (chunkCity != null) ? chunkCity.getName() : "Nature";
-            objective.getScore("§8• §fLocation§7: " + chunkCityName).setScore(6);
+            Component locationName = (chunkCity != null) ? Component.text(chunkCity.getName()) :
+                    Component.translatable("omc.scoreboard.wilderness");
+
+            Component locationLine = Component.translatable("omc.scoreboard.location",
+                    Component.text("§8• §f"),
+                    Component.text("§7").append(locationName));
+            setLine(scoreboard, objective, line--, locationLine);
         }
 
+        // Contest info
         ContestData data = ContestManager.getInstance().data;
         int phase = data.getPhase();
-        if(phase != 1) {
-            objective.getScore(" ").setScore(5);
-            objective.getScore("§8• §6§lCONTEST!").setScore(4);
-            objective.getScore(ChatColor.valueOf(data.getColor1()) + data.getCamp1() + " §8VS " + ChatColor.valueOf(data.getColor2()) + data.getCamp2()).setScore(3);
-            objective.getScore("§cFin dans " + DateUtils.getTimeUntilNextMonday()).setScore(2);
+        if (phase != 1) {
+            setLine(scoreboard, objective, line--, Component.text(" ")); // Spacer
+            setLine(scoreboard, objective, line--, Component.text("§8• §6§lCONTEST!")); // Contest title
+
+            // Camp vs Camp line
+            Component contestLine = Component.text("§8• §f"+
+                    ChatColor.valueOf(data.getColor1()) + data.getCamp1() + " §8VS " +
+                            ChatColor.valueOf(data.getColor2()) + data.getCamp2());
+            setLine(scoreboard, objective, line--, contestLine);
+
+            // Contest end timer
+            Component endTimeLine = Component.translatable("omc.scoreboard.contest_end_time",
+                    Component.text("§8• §f"),
+                    Component.text(DateUtils.getTimeUntilNextMonday()));
+            setLine(scoreboard, objective, line--, endTimeLine);
         }
 
-        objective.getScore("   ").setScore(1);
-        objective.getScore("§d      ᴘʟᴀʏ.ᴏᴘᴇɴᴍᴄ.ꜰʀ").setScore(0);
+        setLine(scoreboard, objective, line--, Component.text("   ")); // Spacer
+
+        // Server address
+        Component serverAddressLine = Component.translatable("omc.scoreboard.server_address")
+                .color(TextColor.fromHexString("#FF55FF"));
+        setLine(scoreboard, objective, line--, serverAddressLine);
 
         if (LuckPermsAPI.hasLuckPerms() && globalTeamManager != null) globalTeamManager.updatePlayerTeam(player);
+    }
+
+    /**
+     * Set a line in the scoreboard with the given component
+     *
+     * @param scoreboard The scoreboard to update
+     * @param objective The objective to add the score to
+     * @param score The score value (line number)
+     * @param component The component to display
+     */
+    private void setLine(Scoreboard scoreboard, Objective objective, int score, Component component) {
+        String entry = getEntryForScore(score);
+        objective.getScore(entry).setScore(score);
+
+        Team team = scoreboard.getTeam(TEAM_PREFIX + score);
+        if (team != null) {
+            String json = GsonComponentSerializer.gson().serialize(component);
+            team.prefix(Component.text(""));
+            team.suffix(component);
+        }
+    }
+
+    /**
+     * Get a unique entry for the given score
+     *
+     * @param score The score value
+     * @return A unique entry string
+     */
+    private String getEntryForScore(int score) {
+        return "§" + (score < 10 ? score : "a§" + (score - 10));
     }
 }
