@@ -8,6 +8,10 @@ import fr.openmc.core.features.economy.EconomyManager;
 import fr.openmc.core.features.homes.HomeLimits;
 import fr.openmc.core.features.homes.HomeUpgradeManager;
 import fr.openmc.core.features.homes.HomesManager;
+import fr.openmc.core.utils.messages.MessageType;
+import fr.openmc.core.utils.messages.MessagesManager;
+import fr.openmc.core.utils.messages.Prefix;
+import fr.openmc.core.utils.customitems.CustomItemRegistry;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -41,41 +45,48 @@ public class HomeUpgradeMenu extends Menu {
     public @NotNull Map<Integer, ItemStack> getContent() {
         Map<Integer, ItemStack> items = new HashMap<>();
 
-        int currentHome = homesManager.getHomeLimit(getOwner().getUniqueId());
+        try {
+            int currentHome = homesManager.getHomeLimit(getOwner().getUniqueId());
 
-        int homeMaxLimit = HomeLimits.values().length - 1;
+            int homeMaxLimit = HomeLimits.values().length - 1;
 
-        HomeLimits lastUpgrade = HomeLimits.valueOf("LIMIT_" + homeMaxLimit);
-        HomeLimits nextUpgrade = homeUpgradeManager.getNextUpgrade(homeUpgradeManager.getCurrentUpgrade(getOwner().getPlayer())) != null
-                ? homeUpgradeManager.getNextUpgrade(homeUpgradeManager.getCurrentUpgrade(getOwner().getPlayer()))
-                : lastUpgrade;
+            HomeLimits lastUpgrade = HomeLimits.valueOf("LIMIT_" + homeMaxLimit);
+            HomeLimits nextUpgrade = homeUpgradeManager.getNextUpgrade(homeUpgradeManager.getCurrentUpgrade(getOwner().getPlayer())) != null
+                    ? homeUpgradeManager.getNextUpgrade(homeUpgradeManager.getCurrentUpgrade(getOwner().getPlayer()))
+                    : lastUpgrade;
 
-        int finalCurrentHome = currentHome;
-        items.put(4, new ItemBuilder(this, CustomStack.getInstance("omc_homes:omc_homes_icon_upgrade").getItemStack(), itemMeta -> {
-            itemMeta.displayName(Component.translatable("omc.homes.menu.upgrade.title"));
-            List<Component> lore = new ArrayList<>();
+            int finalCurrentHome = currentHome;
+            items.put(4, new ItemBuilder(this, CustomItemRegistry.getByName("omc_homes:omc_homes_icon_upgrade").getBest(), itemMeta -> {
+                itemMeta.displayName(Component.translatable("omc.homes.menu.upgrade.title"));
+                List<Component> lore = new ArrayList<>();
 
             lore.add(Component.translatable("omc.homes.menu.upgrade.current", Component.text(finalCurrentHome)));
 
             if (nextUpgrade.getLimit() >= lastUpgrade.getLimit()) {
                 lore.add(Component.translatable("omc.homes.menu.upgrade.max_reached"));
-            } else {
-                lore.add(Component.translatable(
+                } else {
+                    lore.add(Component.translatable(
                         "omc.homes.menu.upgrade.price",
                         Component.text(String.valueOf(nextUpgrade.getPrice())),
                         Component.text(EconomyManager.getEconomyIcon())
                 ));
-                lore.add(Component.translatable("omc.homes.menu.upgrade.aywenite", Component.text(nextUpgrade.getAyweniteCost())));
-                lore.add(Component.translatable("omc.homes.menu.upgrade.next_limit", Component.text(nextUpgrade.getLimit())));
-                lore.add(Component.translatable("omc.homes.menu.upgrade.click_to_upgrade"));
-            }
+                    lore.add(Component.translatable("omc.homes.menu.upgrade.aywenite", Component.text(nextUpgrade.getAyweniteCost())));
+                    lore.add(Component.translatable("omc.homes.menu.upgrade.next_limit", Component.text(nextUpgrade.getLimit())));
+                    lore.add(Component.translatable("omc.homes.menu.upgrade.click_to_upgrade"));
+                }
 
-            itemMeta.lore(lore);
-        }).setOnClick(event -> {
-            homeUpgradeManager.upgradeHome(getOwner());
+                itemMeta.lore(lore);
+            }).setOnClick(event -> {
+                homeUpgradeManager.upgradeHome(getOwner());
+                getOwner().closeInventory();
+            }));
+
+            return items;
+        } catch (Exception e) {
+            MessagesManager.sendMessage(getOwner(), Component.text("§cUne Erreur est survenue, veuillez contacter le Staff"), Prefix.OPENMC, MessageType.ERROR, false);
             getOwner().closeInventory();
-        }));
-
+            e.printStackTrace();
+        }
         return items;
     }
 

@@ -8,6 +8,10 @@ import fr.openmc.api.menulib.utils.ItemBuilder;
 import fr.openmc.core.features.homes.Home;
 import fr.openmc.core.features.homes.utils.HomeUtil;
 import fr.openmc.core.features.mailboxes.utils.MailboxMenuManager;
+import fr.openmc.core.utils.messages.MessageType;
+import fr.openmc.core.utils.messages.MessagesManager;
+import fr.openmc.core.utils.messages.Prefix;
+import fr.openmc.core.utils.customitems.CustomItemRegistry;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
@@ -42,22 +46,31 @@ public class HomeConfigMenu extends Menu {
     @Override
     public @NotNull Map<Integer, ItemStack> getContent() {
         Map<Integer, ItemStack> content = new HashMap<>();
+        Player player = getOwner();
 
-        content.put(4, home.getIconItem());
+        try {
+            content.put(4, home.getIconItem());
 
-        content.put(20, new ItemBuilder(this, HomeUtil.getRandomsIcons(), itemMeta -> {
-            itemMeta.displayName(Component.translatable("omc.homes.menu.config.icon.change"));
-            itemMeta.lore(List.of(Component.translatable("omc.homes.menu.config.icon.change.lore")));
-        }).setNextMenu(new HomeChangeIconMenu(getOwner(), home)));
+            content.put(20, new ItemBuilder(this, HomeUtil.getRandomsIcons(), itemMeta -> {
+                itemMeta.displayName(Component.translatable("omc.homes.menu.config.icon.change"));
+                itemMeta.lore(List.of(Component.translatable("omc.homes.menu.config.icon.change.lore")));
+            }).setNextMenu(new HomeChangeIconMenu(player, home)));
 
-        content.put(24, new ItemBuilder(this, CustomStack.getInstance("omc_homes:omc_homes_icon_bin_red").getItemStack(), itemMeta -> {
-            itemMeta.displayName(Component.text(new FontImageWrapper("omc_homes:bin").getString() + " ").append(Component.translatable("omc.homes.menu.config.delete")));
-            itemMeta.lore(List.of(Component.translatable("omc.homes.menu.config.delete.lore")));
-        }).setNextMenu(new HomeDeleteConfirmMenu(getOwner(), home)));
+            //TODO mettre un font de "omc_homes:bin" avant '§cSupprimer le home'
+            content.put(24, new ItemBuilder(this, CustomItemRegistry.getByName("omc_homes:omc_homes_icon_bin_red").getBest(), itemMeta -> {
+                itemMeta.displayName(Component.text("").append(Component.translatable("omc.homes.menu.config.delete")));
+                itemMeta.lore(List.of(Component.translatable("omc.homes.menu.config.delete.lore")));
+            }).setNextMenu(new HomeDeleteConfirmMenu(getOwner(), home)));
 
-        content.put(36, new ItemBuilder(this, MailboxMenuManager.previousPageBtn()).setNextMenu(new HomeMenu(getOwner())));
-        content.put(44, new ItemBuilder(this, MailboxMenuManager.cancelBtn()).setCloseButton());
+            content.put(36, new ItemBuilder(this, MailboxMenuManager.previousPageBtn()).setNextMenu(new HomeMenu(player)));
+            content.put(44, new ItemBuilder(this, MailboxMenuManager.cancelBtn()).setCloseButton());
 
+            return content;
+        } catch (Exception e) {
+            MessagesManager.sendMessage(player, Component.text("§cUne Erreur est survenue, veuillez contacter le Staff"), Prefix.OPENMC, MessageType.ERROR, false);
+            player.closeInventory();
+            e.printStackTrace();
+        }
         return content;
     }
 

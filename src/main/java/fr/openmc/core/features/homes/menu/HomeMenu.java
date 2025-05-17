@@ -7,6 +7,7 @@ import fr.openmc.core.features.homes.Home;
 import fr.openmc.core.features.homes.HomesManager;
 import fr.openmc.core.features.homes.utils.HomeUtil;
 import fr.openmc.core.features.mailboxes.utils.MailboxMenuManager;
+import fr.openmc.core.utils.customitems.CustomItemRegistry;
 import fr.openmc.core.utils.messages.MessageType;
 import fr.openmc.core.utils.messages.MessagesManager;
 import fr.openmc.core.utils.messages.Prefix;
@@ -66,13 +67,13 @@ public class HomeMenu extends PaginatedMenu {
     @Override
     public @NotNull List<ItemStack> getItems() {
         List<ItemStack> items = new ArrayList<>();
-
-        for(Home home : HomesManager.getHomes(target.getUniqueId())) {
-            items.add(new ItemBuilder(this, HomeUtil.getHomeIconItem(home), itemMeta -> {
-                itemMeta.displayName(Component.translatable("omc.homes.menu.home.name", Component.text(home.getName())));
-                itemMeta.lore(List.of(
-                        Component.translatable("omc.homes.menu.home.lore.teleport"),
-                        Component.translatable("omc.homes.menu.home.lore.configure")
+        try {
+            for(Home home : HomesManager.getHomes(target.getUniqueId())) {
+                items.add(new ItemBuilder(this, HomeUtil.getHomeIconItem(home), itemMeta -> {
+                    itemMeta.displayName(Component.translatable("omc.homes.menu.home.name", Component.text(home.getName())));
+                    itemMeta.lore(List.of(
+                            Component.translatable("omc.homes.menu.home.lore.teleport"),
+                            Component.translatable("omc.homes.menu.home.lore.configure")
                 ));
             }).setOnClick(event -> {
                 if(event.isLeftClick()) {
@@ -89,35 +90,41 @@ public class HomeMenu extends PaginatedMenu {
             }));
         }
 
-        return items;
-    }
+            return items;
+            } catch (Exception e) {
+                MessagesManager.sendMessage(getOwner(), Component.text("§cUne Erreur est survenue, veuillez contacter le Staff"), Prefix.OPENMC, MessageType.ERROR, false);
+                getOwner().closeInventory();
+                e.printStackTrace();
+            }
+            return items;
+        }
 
-    @Override
-    public Map<Integer, ItemStack> getButtons() {
-        Map<Integer, ItemStack> map = new HashMap<>();
+        @Override
+        public Map<Integer, ItemStack> getButtons() {
+            Map<Integer, ItemStack> map = new HashMap<>();
 
-        if(!wasTarget) {
-            map.put(45, new ItemBuilder(this, CustomStack.getInstance("omc_homes:omc_homes_icon_information").getItemStack(), itemMeta -> {
+            if(!wasTarget) {
+                map.put(45, new ItemBuilder(this, CustomItemRegistry.getByName("omc_homes:omc_homes_icon_information").getBest(), itemMeta -> {
                 itemMeta.displayName(Component.translatable("omc.homes.menu.infos.title"));
                 itemMeta.lore(List.of(
                         Component.translatable("omc.homes.menu.infos.lore.1"),
                         Component.empty(),
-                        Component.translatable("omc.homes.menu.infos.lore.2"),
+                            Component.translatable("omc.homes.menu.infos.lore.2"),
                         Component.translatable("omc.homes.menu.infos.lore.3")
-                ));
-            }));
+                    ));
+                }));
 
-            map.put(53, new ItemBuilder(this, CustomStack.getInstance("omc_homes:omc_homes_icon_upgrade").getItemStack(), itemMeta -> {
-                itemMeta.displayName(Component.translatable("omc.homes.menu.upgrade.title"));
-                itemMeta.lore(List.of(Component.translatable("omc.homes.menu.upgrade.lore")));
+                map.put(53, new ItemBuilder(this, CustomItemRegistry.getByName("omc_homes:omc_homes_icon_upgrade").getBest(), itemMeta -> {
+                    itemMeta.displayName(Component.translatable("omc.homes.menu.upgrade.title"));
+                    itemMeta.lore(List.of(Component.translatable("omc.homes.menu.upgrade.lore")));
             }).setOnClick(event -> new HomeUpgradeMenu(getOwner()).open()));
         }
 
-        map.put(48, new ItemBuilder(this, MailboxMenuManager.previousPageBtn()).setPreviousPageButton());
-        map.put(49, new ItemBuilder(this, MailboxMenuManager.cancelBtn()).setCloseButton());
-        map.put(50, new ItemBuilder(this, MailboxMenuManager.nextPageBtn()).setNextPageButton());
+            map.put(48, new ItemBuilder(this, MailboxMenuManager.previousPageBtn()).setPreviousPageButton());
+            map.put(49, new ItemBuilder(this, MailboxMenuManager.cancelBtn()).setCloseButton());
+            map.put(50, new ItemBuilder(this, MailboxMenuManager.nextPageBtn()).setNextPageButton());
 
-        return map;
+            return map;
     }
 
     @Override

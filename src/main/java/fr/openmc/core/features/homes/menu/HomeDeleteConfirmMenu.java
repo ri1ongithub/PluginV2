@@ -7,6 +7,7 @@ import fr.openmc.api.menulib.utils.ItemBuilder;
 import fr.openmc.core.features.homes.Home;
 import fr.openmc.core.features.homes.HomesManager;
 import fr.openmc.core.features.homes.utils.HomeUtil;
+import fr.openmc.core.utils.customitems.CustomItemRegistry;
 import fr.openmc.core.utils.messages.MessageType;
 import fr.openmc.core.utils.messages.MessagesManager;
 import fr.openmc.core.utils.messages.Prefix;
@@ -46,37 +47,45 @@ public class HomeDeleteConfirmMenu extends Menu {
     @Override
     public @NotNull Map<Integer, ItemStack> getContent() {
         Map<Integer, ItemStack> content = new HashMap<>();
+        Player player = getOwner();
 
-        content.put(2, new ItemBuilder(
-                        this,
-                        CustomStack.getInstance("omc_homes:omc_homes_icon_bin_red").getItemStack(),
-                        itemMeta -> {
-                            itemMeta.displayName(Component.translatable("omc.homes.menu.delete.confirm"));
-                            itemMeta.lore(List.of(Component.translatable("omc.homes.menu.delete.confirm.lore")));
+        try {
+            content.put(2, new ItemBuilder(
+                            this,
+                            CustomItemRegistry.getByName("omc_homes:omc_homes_icon_bin_red").getBest(),
+                            itemMeta -> {
+                                itemMeta.displayName(Component.translatable("omc.homes.menu.delete.confirm"));
+                                itemMeta.lore(List.of(Component.translatable("omc.homes.menu.delete.confirm.lore")));
                         }
                 ).setOnClick(event -> {
                     homesManager.removeHome(home);
                     MessagesManager.sendMessage(
-                        getOwner(),
+                        player,
                         Component.translatable("omc.homes.menu.delete.success", Component.text(home.getName())),
                         Prefix.HOME, MessageType.SUCCESS, true
                     );
-                    getOwner().closeInventory();
-                })
-        );
+                    player.closeInventory();
+                    })
+            );
 
-        content.put(4, new ItemBuilder(
-                this,
-                HomeUtil.getHomeIconItem(home),
-                itemMeta -> itemMeta.setDisplayName("§a" + home.getName())
-        ));
+            content.put(4, new ItemBuilder(
+                    this,
+                    HomeUtil.getHomeIconItem(home),
+                    itemMeta -> itemMeta.setDisplayName("§a" + home.getName())
+            ));
 
-        content.put(6, new ItemBuilder(
-                this,
-                CustomStack.getInstance("omc_homes:omc_homes_icon_bin").getItemStack(),
+            content.put(6, new ItemBuilder(
+                    this,
+                    CustomItemRegistry.getByName("omc_homes:omc_homes_icon_bin").getBest(),
                 itemMeta -> itemMeta.displayName(Component.translatable("omc.homes.menu.delete.cancel"))
         ).setBackButton());
 
+            return content;
+        } catch (Exception e) {
+            MessagesManager.sendMessage(player, Component.text("§cUne Erreur est survenue, veuillez contacter le Staff"), Prefix.OPENMC, MessageType.ERROR, false);
+            player.closeInventory();
+            e.printStackTrace();
+        }
         return content;
     }
 
