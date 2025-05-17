@@ -196,7 +196,7 @@ public class ScoreboardManager implements Listener {
 
         // Balance line
         String balance = EconomyManager.getInstance().getMiniBalance(player.getUniqueId());
-        Component balanceLine = Component.text("§8• §r" + EconomyManager.getEconomyIcon() + " §d" + balance);
+        Component balanceLine = Component.text("§8•  §r" + EconomyManager.getEconomyIcon() + " §d" + balance);
         setLine(scoreboard, objective, line--,  balanceLine);
 
         setLine(scoreboard, objective, line--, Component.text("  ")); // Spacer
@@ -257,7 +257,6 @@ public class ScoreboardManager implements Listener {
 
         Team team = scoreboard.getTeam(TEAM_PREFIX + score);
         if (team != null) {
-            String json = GsonComponentSerializer.gson().serialize(component);
             team.prefix(Component.text(""));
             team.suffix(component);
         }

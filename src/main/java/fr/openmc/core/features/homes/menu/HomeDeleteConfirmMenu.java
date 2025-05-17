@@ -51,14 +51,16 @@ public class HomeDeleteConfirmMenu extends Menu {
                         this,
                         CustomStack.getInstance("omc_homes:omc_homes_icon_bin_red").getItemStack(),
                         itemMeta -> {
-                            itemMeta.setDisplayName("§cConfirmer la suppression");
-                            itemMeta.setLore(List.of(
-                                    ChatColor.GRAY + "■ §cClique §4gauche §cpour confirmer la suppression"
-                            ));
+                            itemMeta.displayName(Component.translatable("omc.homes.menu.delete.confirm"));
+                            itemMeta.lore(List.of(Component.translatable("omc.homes.menu.delete.confirm.lore")));
                         }
                 ).setOnClick(event -> {
                     homesManager.removeHome(home);
-                    MessagesManager.sendMessage(getOwner(), Component.text("§aHome §e" + home.getName() + " §asupprimé avec succès !"), Prefix.HOME, MessageType.SUCCESS, true);
+                    MessagesManager.sendMessage(
+                        getOwner(),
+                        Component.translatable("omc.homes.menu.delete.success", Component.text(home.getName())),
+                        Prefix.HOME, MessageType.SUCCESS, true
+                    );
                     getOwner().closeInventory();
                 })
         );
@@ -72,9 +74,8 @@ public class HomeDeleteConfirmMenu extends Menu {
         content.put(6, new ItemBuilder(
                 this,
                 CustomStack.getInstance("omc_homes:omc_homes_icon_bin").getItemStack(),
-                itemMeta ->
-                itemMeta.setDisplayName("§aAnnuler la suppression")).setBackButton()
-        );
+                itemMeta -> itemMeta.displayName(Component.translatable("omc.homes.menu.delete.cancel"))
+        ).setBackButton());
 
         return content;
     }

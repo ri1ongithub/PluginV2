@@ -115,9 +115,10 @@ public class LeaderboardManager {
     public static Component createContributorsTextLeaderboard() {
         var contributorsMap = LeaderboardManager.getInstance().getGithubContributorsMap();
         if (contributorsMap.isEmpty()) {
-            return Component.text("Aucun contributeur trouvé pour le moment.").color(NamedTextColor.RED);
+            return Component.translatable("omc.leaderboard.contributors.empty")
+                    .color(NamedTextColor.RED);
         }
-        Component text = Component.text("--- Leaderboard des Contributeurs GitHub ---")
+        Component text = Component.translatable("omc.leaderboard.contributors.title")
                 .color(NamedTextColor.DARK_PURPLE)
                 .decorate(TextDecoration.BOLD);
         for (var entry : contributorsMap.entrySet()) {
@@ -129,7 +130,7 @@ public class LeaderboardManager {
                     .append(Component.text(rank).color(getRankColor(rank)))
                     .append(Component.text(" ").append(Component.text(contributorName).color(NamedTextColor.LIGHT_PURPLE)))
                     .append(Component.text(" - ").color(NamedTextColor.GRAY))
-                    .append(Component.text(lines + " lignes crées").color(NamedTextColor.WHITE));
+                    .append((Component.text(lines).append(Component.translatable("omc.leaderboard.contributors.lines_added"))).color(NamedTextColor.WHITE));
             text = text.append(line);
         }
         text = text.append(Component.text("\n-----------------------------------------")
@@ -146,9 +147,9 @@ public class LeaderboardManager {
     public static Component createMoneyTextLeaderboard() {
         var moneyMap = LeaderboardManager.getInstance().getPlayerMoneyMap();
         if (moneyMap.isEmpty()) {
-            return Component.text("Aucun joueur trouvé pour le moment.").color(NamedTextColor.RED);
+            return Component.translatable("omc.leaderboard.player_money.empty").color(NamedTextColor.RED);
         }
-        Component text = Component.text("--- Leaderboard de l'argent des joueurs ----")
+        Component text = Component.translatable("omc.leaderboard.player_money.title")
                 .color(NamedTextColor.DARK_PURPLE)
                 .decorate(TextDecoration.BOLD);
         for (var entry : moneyMap.entrySet()) {
@@ -177,9 +178,9 @@ public class LeaderboardManager {
     public static Component createCityMoneyTextLeaderboard() {
         var moneyMap = LeaderboardManager.getInstance().getVilleMoneyMap();
         if (moneyMap.isEmpty()) {
-            return Component.text("Aucune ville trouvée pour le moment.").color(NamedTextColor.RED);
+            return Component.translatable("omc.leaderboard.city_money.empty").color(NamedTextColor.RED);
         }
-        Component text = Component.text("--- Leaderboard de l'argent des villes ----")
+        Component text = Component.translatable("omc.leaderboard.city_money.title")
                 .color(NamedTextColor.DARK_PURPLE)
                 .decorate(TextDecoration.BOLD);
         for (var entry : moneyMap.entrySet()) {
@@ -208,7 +209,7 @@ public class LeaderboardManager {
     public static Component createPlayTimeTextLeaderboard() {
         var playtimeMap = LeaderboardManager.getInstance().getPlayTimeMap();
         if (playtimeMap.isEmpty()) {
-            return Component.text("Aucun joueur trouvé pour le moment.").color(NamedTextColor.RED);
+            return Component.translatable("omc.leaderboard.playtime.empty").color(NamedTextColor.RED);
         }
         Component text = Component.text("--- Leaderboard du temps de jeu -----------")
                 .color(NamedTextColor.DARK_PURPLE)

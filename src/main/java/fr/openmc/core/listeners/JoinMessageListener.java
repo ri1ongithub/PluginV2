@@ -31,7 +31,7 @@ public class JoinMessageListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         final Player player = event.getPlayer();
 
-        MessagesManager.sendMessage(player, Component.translatable("omc.player.join.welcome"), Prefix.OPENMC, MessageType.INFO, false);
+        MessagesManager.sendMessage(player, Component.translatable("omc.player.join.welcome", "\n§cLooks like you don't have the resource pack enabled :/\n§4Without the pack, messages won't be displayed properly\n\n§cPlease install ItemsAdder and omc's namespaces\n§4(or at least the translation pack)\n\n§7Namespaces : github.com/ServerOpenMC/ItemsAdder\n§8Translation pack : [Todo w/ gh actions]"), Prefix.OPENMC, MessageType.INFO, false);
 
         TabList.getInstance().updateTabList(player);
 

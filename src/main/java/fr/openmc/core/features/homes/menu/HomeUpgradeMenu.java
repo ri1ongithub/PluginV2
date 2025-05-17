@@ -9,6 +9,8 @@ import fr.openmc.core.features.homes.HomeLimits;
 import fr.openmc.core.features.homes.HomeUpgradeManager;
 import fr.openmc.core.features.homes.HomesManager;
 import me.clip.placeholderapi.PlaceholderAPI;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
@@ -50,19 +52,25 @@ public class HomeUpgradeMenu extends Menu {
 
         int finalCurrentHome = currentHome;
         items.put(4, new ItemBuilder(this, CustomStack.getInstance("omc_homes:omc_homes_icon_upgrade").getItemStack(), itemMeta -> {
-            itemMeta.setDisplayName("§8● §6Améliorer les homes §8(Clique gauche)");
-            List<String> lore = new ArrayList<>();
-            lore.add("§6Nombre de home actuel: §e" + finalCurrentHome);
+            itemMeta.displayName(Component.translatable("omc.homes.menu.upgrade.title"));
+            List<Component> lore = new ArrayList<>();
+
+            lore.add(Component.translatable("omc.homes.menu.upgrade.current", Component.text(finalCurrentHome)));
+
             if (nextUpgrade.getLimit() >= lastUpgrade.getLimit()) {
-                lore.add("§cVous avez atteint le nombre maximum de homes");
+                lore.add(Component.translatable("omc.homes.menu.upgrade.max_reached"));
             } else {
-                lore.add("§bPrix: §a" + nextUpgrade.getPrice() + " " + EconomyManager.getEconomyIcon());
-                lore.add("§bAywenite: §d" + nextUpgrade.getAyweniteCost());
-                lore.add("§6Nombre de home au prochain niveau: §e" + nextUpgrade.getLimit());
-                lore.add("§7→ Clique gauche pour améliorer");
+                lore.add(Component.translatable(
+                        "omc.homes.menu.upgrade.price",
+                        Component.text(String.valueOf(nextUpgrade.getPrice())),
+                        Component.text(EconomyManager.getEconomyIcon())
+                ));
+                lore.add(Component.translatable("omc.homes.menu.upgrade.aywenite", Component.text(nextUpgrade.getAyweniteCost())));
+                lore.add(Component.translatable("omc.homes.menu.upgrade.next_limit", Component.text(nextUpgrade.getLimit())));
+                lore.add(Component.translatable("omc.homes.menu.upgrade.click_to_upgrade"));
             }
 
-            itemMeta.setLore(lore);
+            itemMeta.lore(lore);
         }).setOnClick(event -> {
             homeUpgradeManager.upgradeHome(getOwner());
             getOwner().closeInventory();

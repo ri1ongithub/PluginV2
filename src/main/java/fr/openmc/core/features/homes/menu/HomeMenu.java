@@ -69,15 +69,18 @@ public class HomeMenu extends PaginatedMenu {
 
         for(Home home : HomesManager.getHomes(target.getUniqueId())) {
             items.add(new ItemBuilder(this, HomeUtil.getHomeIconItem(home), itemMeta -> {
-                itemMeta.setDisplayName("§e" + home.getName());
-                itemMeta.setLore(List.of(
-                        ChatColor.GRAY + "■ §aClique §2gauche pour vous téléporter",
-                        ChatColor.GRAY + "■ §cCliquez §4droit §cpour configurer le home"
+                itemMeta.displayName(Component.translatable("omc.homes.menu.home.name", Component.text(home.getName())));
+                itemMeta.lore(List.of(
+                        Component.translatable("omc.homes.menu.home.lore.teleport"),
+                        Component.translatable("omc.homes.menu.home.lore.configure")
                 ));
             }).setOnClick(event -> {
                 if(event.isLeftClick()) {
                     this.getInventory().close();
-                    MessagesManager.sendMessage(getOwner(), Component.text("§aVous avez été téléporté à votre home §e" + home.getName() + "§a."), Prefix.HOME, MessageType.SUCCESS, true);
+                    MessagesManager.sendMessage(getOwner(),
+                            Component.translatable("omc.homes.menu.teleport.success", Component.text(home.getName())),
+                            Prefix.HOME, MessageType.SUCCESS, true
+                    );
                     getOwner().teleport(home.getLocation());
                 } else if(event.isRightClick()) {
                     Player player = (Player) event.getWhoClicked();
@@ -94,24 +97,19 @@ public class HomeMenu extends PaginatedMenu {
         Map<Integer, ItemStack> map = new HashMap<>();
 
         if(!wasTarget) {
-            map.put(45, new ItemBuilder(this, CustomStack.getInstance("omc_homes:omc_homes_icon_information").getItemStack(),
-                    itemMeta -> {
-                        itemMeta.setDisplayName("§8(§bⓘ§8) §6Informations sur vos homes");
-                        itemMeta.setLore(List.of(
-                                "§8→ §6Chaque icon qui représente un home est lié au nom du home, par exemple, si vous appelé votre home 'maison', l'icône sera une maison",
-                                "§7",
-                                "§8› §6Vous pouvez configurer le home en effectuant un clique droit sur l'icône du home.",
-                                "§8› §6Vous pouvez vous téléporter à votre home en effectuant un clique gauche sur l'icône du home."
-                        ));
-                    }
-                )
-            );
+            map.put(45, new ItemBuilder(this, CustomStack.getInstance("omc_homes:omc_homes_icon_information").getItemStack(), itemMeta -> {
+                itemMeta.displayName(Component.translatable("omc.homes.menu.infos.title"));
+                itemMeta.lore(List.of(
+                        Component.translatable("omc.homes.menu.infos.lore.1"),
+                        Component.empty(),
+                        Component.translatable("omc.homes.menu.infos.lore.2"),
+                        Component.translatable("omc.homes.menu.infos.lore.3")
+                ));
+            }));
 
             map.put(53, new ItemBuilder(this, CustomStack.getInstance("omc_homes:omc_homes_icon_upgrade").getItemStack(), itemMeta -> {
-                itemMeta.setDisplayName("§8● §6Améliorer les homes §8(Click ici)");
-                itemMeta.setLore(List.of(
-                    "§6Cliquez pour améliorer vos homes"
-                ));
+                itemMeta.displayName(Component.translatable("omc.homes.menu.upgrade.title"));
+                itemMeta.lore(List.of(Component.translatable("omc.homes.menu.upgrade.lore")));
             }).setOnClick(event -> new HomeUpgradeMenu(getOwner()).open()));
         }
 

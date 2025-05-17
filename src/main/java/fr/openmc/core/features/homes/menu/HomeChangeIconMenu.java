@@ -66,9 +66,7 @@ public class HomeChangeIconMenu extends PaginatedMenu {
             HomeIcons homeIcon = HomeIcons.values()[i];
             items.add(new ItemBuilder(this, CustomStack.getInstance(homeIcon.getId()).getItemStack(), itemMeta -> {
                 itemMeta.setDisplayName("§a" + homeIcon.getName());
-                itemMeta.setLore(List.of(
-                        ChatColor.GRAY + "■ §aClique §2gauche §apour changer l'icône"
-                ));
+                itemMeta.lore(List.of(Component.translatable("omc.homes.menu.config.icon.change.lore")));
 
                 if(home.getIcon().equals(homeIcon)) {
                     itemMeta.addEnchant(Enchantment.SHARPNESS, 5, false);
@@ -77,7 +75,7 @@ public class HomeChangeIconMenu extends PaginatedMenu {
             }).setOnClick(event -> {
                 Bukkit.getScheduler().runTask(OMCPlugin.getInstance(), () -> {
                     home.setIcon(homeIcon);
-                    MessagesManager.sendMessage(getOwner(), Component.text("§aL'icône de votre home §2"+ home.getName() + " §achangée avec succès !"), Prefix.HOME, MessageType.SUCCESS, true);
+                    MessagesManager.sendMessage(getOwner(), Component.translatable("omc.homes.menu.icon.change.success", Component.text(home.getName())), Prefix.HOME, MessageType.SUCCESS, true);
                 });
                 getOwner().closeInventory();
             }));

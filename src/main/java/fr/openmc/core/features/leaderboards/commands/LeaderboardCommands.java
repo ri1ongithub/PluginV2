@@ -84,7 +84,6 @@ public class LeaderboardCommands {
     @CommandPermission("op")
     @Description("Défini la taille des Holograms.")
     void setScaleCommand(Player player, float scale) {
-        player.sendMessage("§aTaille des Holograms modifiée à " + scale);
         try {
             LeaderboardManager.getInstance().setScale(scale);
             player.sendMessage("§aTaille des Holograms modifiée à " + scale);
