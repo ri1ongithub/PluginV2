@@ -43,21 +43,17 @@ public class PendingMailbox extends PaginatedMailbox<SenderLetter> {
                     if (deleteLetter(id)) {
                         if (receiver != null) MailboxManager.cancelLetter(receiver, id);
                         MailboxManager.givePlayerItems(player, items);
-                        Component message = Component.text("Vous avez annulé la lettre et reçu ", NamedTextColor.DARK_GREEN)
-                                                     .append(Component.text(itemsCount, NamedTextColor.GREEN))
-                                                     .append(Component.text(" " + getItemCount(itemsCount), NamedTextColor.DARK_GREEN));
+                        Component message = Component.translatable("omc.mailbox.cancel.success", Component.text(itemsCount), Component.text(getItemCount(itemsCount)));
                         sendSuccessMessage(player, message);
                     }
                 } else {
-                    Component message = Component.text("La lettre avec l'id ", NamedTextColor.DARK_RED)
-                                                 .append(Component.text(id, NamedTextColor.RED))
-                                                 .append(Component.text(" n'a pas été trouvée.", NamedTextColor.DARK_RED));
+                    Component message = Component.translatable("omc.mailbox.cancel.not_found", Component.text(id));
                     sendFailureMessage(player, message);
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
-            sendFailureMessage(player, "Une erreur est survenue.");
+            sendFailureMessage(player, Component.translatable("omc.mailbox.error"));
         }
     }
 

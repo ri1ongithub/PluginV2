@@ -123,14 +123,15 @@ public class MailboxManager {
     }
 
     private static void sendNotification(Player receiver, int itemsCount, int id, String name) {
-        Component message = Component.text("Vous avez reçu ", NamedTextColor.DARK_GREEN)
-                                     .append(Component.text(itemsCount, NamedTextColor.GREEN))
-                                     .append(Component.text(" item" + (itemsCount > 1 ? "s" : "") + " de la part de ", NamedTextColor.DARK_GREEN))
-                                     .append(Component.text(name, NamedTextColor.GREEN))
-                                     .append(Component.text("\nCliquez-ici", NamedTextColor.YELLOW))
-                                     .clickEvent(getRunCommand("open " + id))
-                                     .hoverEvent(getHoverEvent("Ouvrir la lettre #" + id))
-                                     .append(Component.text(" pour ouvrir la lettre", NamedTextColor.GOLD));
+        Component message = Component.translatable("omc.mailbox.notification.received",
+                Component.text(itemsCount),
+                Component.text(itemsCount > 1 ? "s" : ""),
+                Component.text(name))
+                .append(Component.translatable("omc.mailbox.notification.click_here"))
+                .clickEvent(getRunCommand("open " + id))
+                .hoverEvent(getHoverEvent(Component.translatable("omc.mailbox.notification.open_letter", Component.text(id))))
+                .append(Component.translatable("omc.mailbox.notification.open_suffix"));
+                
         sendSuccessMessage(receiver, message);
         Title titleComponent = getTitle(itemsCount, name);
         receiver.playSound(receiver.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.MASTER, 1.0f, 1.0f);
@@ -138,23 +139,25 @@ public class MailboxManager {
     }
 
     private static @NotNull Title getTitle(int itemsCount, String name) {
-        Component subtitle = Component.text(name, NamedTextColor.GOLD).append(Component.text(" vous a envoyé ", NamedTextColor.YELLOW))
-                                      .append(Component.text(itemsCount, NamedTextColor.GOLD))
-                                      .append(Component.text(" item" + (itemsCount > 1 ? "s" : ""), NamedTextColor.YELLOW));
-        Component title = Component.text("Nouvelle lettre !", NamedTextColor.GREEN);
+        Component subtitle = Component.translatable("omc.mailbox.title.subtitle",
+                Component.text(name).color(NamedTextColor.GOLD),
+                Component.text(itemsCount).color(NamedTextColor.GOLD),
+                Component.text(itemsCount > 1 ? "s" : ""));
+        Component title = Component.translatable("omc.mailbox.title.main");
         return Title.title(title, subtitle);
     }
 
     private static void sendFailureSendingMessage(Player player, String receiverName) {
-        Component message = Component.text("Une erreur est apparue lors de l'envoie des items à ", NamedTextColor.DARK_RED)
-                                     .append(Component.text(receiverName, NamedTextColor.RED));
+        Component message = Component.translatable("omc.mailbox.send.error", Component.text(receiverName));
         sendFailureMessage(player, message);
     }
 
     private static void sendSuccessSendingMessage(Player player, String receiverName, int itemsCount) {
-        Component message = Component.text(itemsCount, NamedTextColor.GREEN)
-                                     .append(Component.text(" " + getItemCount(itemsCount) + " envoyé" + (itemsCount > 1 ? "s" : "") + " à ", NamedTextColor.DARK_GREEN))
-                                     .append(Component.text(receiverName, NamedTextColor.GREEN));
+        Component message = Component.translatable("omc.mailbox.send.success",
+                Component.text(itemsCount),
+                Component.text(getItemCount(itemsCount)),
+                Component.text(itemsCount > 1 ? "s" : ""),
+                Component.text(receiverName));
         sendSuccessMessage(player, message);
     }
 

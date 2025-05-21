@@ -12,6 +12,8 @@ import fr.openmc.core.utils.messages.MessagesManager;
 import fr.openmc.core.utils.messages.Prefix;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -230,7 +232,7 @@ public class Shop {
                         amountToBuy -= supply.getAmount();
                         removeLatestSupply();
                         double supplierCut = suppliersCut * ((double) supply.getAmount() / amount);
-                        economyManager.addBalance(supply.getSupplier(), supplierCut);
+                        EconomyManager.addBalance(supply.getSupplier(), supplierCut);
                         Player supplier = Bukkit.getPlayer(supply.getSupplier());
                         if (supplier!=null){
                             MessagesManager.sendMessage(supplier, Component.text(buyer.getName() + " a acheté " + amount + " " + item.getItem().getType() + " pour " + basePrice + EconomyManager.getEconomyIcon() + ", vous avez reçu : " + supplierCut + EconomyManager.getEconomyIcon()), Prefix.SHOP, MessageType.SUCCESS, false);
@@ -239,7 +241,7 @@ public class Shop {
                     else {
                         supply.setAmount(supply.getAmount() - amountToBuy);
                         double supplierCut = suppliersCut * ((double) amountToBuy / amount);
-                        economyManager.addBalance(supply.getSupplier(), supplierCut);
+                        EconomyManager.addBalance(supply.getSupplier(), supplierCut);
                         Player supplier = Bukkit.getPlayer(supply.getSupplier());
                         if (supplier!=null){
                             MessagesManager.sendMessage(supplier, Component.text(buyer.getName() + " a acheté " + amount + " " + item.getItem().getType() + " pour " + basePrice + EconomyManager.getEconomyIcon() + ", vous avez reçu : " + supplierCut + EconomyManager.getEconomyIcon()), Prefix.SHOP, MessageType.SUCCESS, false);
@@ -254,7 +256,7 @@ public class Shop {
             owner.getCompany().deposit(companyCut, buyer, "Vente", getName());
         }
         else {
-            economyManager.addBalance(owner.getPlayer(), item.getPrice(amount));
+            EconomyManager.addBalance(owner.getPlayer(), item.getPrice(amount));
             Player player = Bukkit.getPlayer(owner.getPlayer());
             if (player!=null){
                 MessagesManager.sendMessage(player, Component.text(buyer.getName() + " a acheté " + amount + " " + item.getItem().getType() + " pour " + item.getPrice(amount) + EconomyManager.getEconomyIcon() + ", l'argent vous a été transféré !"), Prefix.SHOP, MessageType.SUCCESS, false);
@@ -292,13 +294,19 @@ public class Shop {
      */
     public ItemBuilder getIcon(Menu menu, boolean fromShopMenu) {
         return new ItemBuilder(menu, fromShopMenu ? Material.GOLD_INGOT : Material.BARREL, itemMeta -> {
-            itemMeta.setDisplayName("§e§l" + (fromShopMenu ? "Informations" : getName()));
-            List<String> lore = new ArrayList<>();
-            lore.add("§7■ Chiffre d'affaire : " + EconomyManager.getInstance().getFormattedNumber(turnover));
-            lore.add("§7■ Ventes : §f" + sales.size());
+            itemMeta.displayName(Component.text(fromShopMenu ? "Informations" : getName())
+                .color(NamedTextColor.YELLOW)
+                .decorate(TextDecoration.BOLD));
+            List<Component> lore = new ArrayList<>();
+            lore.add(Component.text("Chiffre d'affaire : ")
+                .color(NamedTextColor.GRAY)
+                .append(Component.text(EconomyManager.getFormattedNumber(turnover))));
+            lore.add(Component.text("Ventes : ")
+                .color(NamedTextColor.GRAY)
+                .append(Component.text(sales.size()).color(NamedTextColor.WHITE)));
             if (!fromShopMenu)
-                lore.add("§7■ Cliquez pour accéder au shop");
-            itemMeta.setLore(lore);
+                lore.add(Component.text("Cliquez pour accéder au shop").color(NamedTextColor.GRAY));
+            itemMeta.lore(lore);
         });
     }
 

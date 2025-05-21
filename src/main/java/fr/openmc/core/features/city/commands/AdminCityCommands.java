@@ -23,7 +23,6 @@ import revxrsal.commands.annotation.Subcommand;
 import revxrsal.commands.bukkit.annotation.CommandPermission;
 
 import java.sql.SQLException;
-import java.util.List;
 import java.util.UUID;
 
 @Command("admcity")
@@ -35,12 +34,12 @@ public class AdminCityCommands {
         City city = CityManager.getCity(cityUUID);
 
         if (city == null) {
-            MessagesManager.sendMessage(player, MessagesManager.Message.CITYNOTFOUND.getMessage(), Prefix.STAFF, MessageType.ERROR, false);
+            MessagesManager.sendMessage(player, Component.translatable("omc.city.not_found"), Prefix.STAFF, MessageType.ERROR, false);
             return;
         }
 
         city.delete();
-        MessagesManager.sendMessage(player, Component.text("La ville a été supprimée"), Prefix.STAFF, MessageType.SUCCESS, false);
+        MessagesManager.sendMessage(player, Component.translatable("omc.admcity.delete.success"), Prefix.STAFF, MessageType.SUCCESS, false);
     }
 
     @Subcommand("info")
@@ -50,11 +49,11 @@ public class AdminCityCommands {
         City city = CityManager.getCity(cityUUID);
 
         if (city == null) {
-            MessagesManager.sendMessage(player, Component.text("Cette ville n'existe pas"), Prefix.STAFF, MessageType.ERROR, false);
+            MessagesManager.sendMessage(player, Component.translatable("omc.city.not_found"), Prefix.STAFF, MessageType.ERROR, false);
             return;
         }
 
-        CityMessages.sendInfo(player, city);
+        CityMessages.sendInfo(player, city); // Assuming CityMessages handles its own translations
     }
 
     @Subcommand("rename")
@@ -63,12 +62,12 @@ public class AdminCityCommands {
         // Aucune vérification de nom, mais il faut espérer que le nom est valide
         City city = CityManager.getCity(cityUUID);
         if (city == null) {
-            MessagesManager.sendMessage(player, MessagesManager.Message.CITYNOTFOUND.getMessage(), Prefix.STAFF, MessageType.ERROR, false);
+            MessagesManager.sendMessage(player, Component.translatable("omc.city.not_found"), Prefix.STAFF, MessageType.ERROR, false);
             return;
         }
         city.renameCity(newName);
 
-        MessagesManager.sendMessage(player, Component.text("La ville a été renommée"), Prefix.STAFF, MessageType.SUCCESS, false);
+        MessagesManager.sendMessage(player, Component.translatable("omc.admcity.rename.success"), Prefix.STAFF, MessageType.SUCCESS, false);
     }
 
     @Subcommand("setOwner")
@@ -77,12 +76,12 @@ public class AdminCityCommands {
         City city = CityManager.getCity(cityUUID);
 
         if (city == null) {
-            MessagesManager.sendMessage(player, MessagesManager.Message.CITYNOTFOUND.getMessage(), Prefix.STAFF, MessageType.ERROR, false);
+            MessagesManager.sendMessage(player, Component.translatable("omc.city.not_found"), Prefix.STAFF, MessageType.ERROR, false);
             return;
         }
 
         city.changeOwner(newOwner.getUniqueId());
-        MessagesManager.sendMessage(player, Component.text("Le propriété a été transférée"), Prefix.STAFF, MessageType.SUCCESS, false);
+        MessagesManager.sendMessage(player, Component.translatable("omc.admcity.setowner.success"), Prefix.STAFF, MessageType.SUCCESS, false);
     }
 
     @Subcommand("setBalance")
@@ -90,12 +89,12 @@ public class AdminCityCommands {
     void setBalance(Player player, @Named("uuid") String cityUUID, @Named("balance") double newBalance) {
         City city = CityManager.getCity(cityUUID);
         if (city == null) {
-            MessagesManager.sendMessage(player, MessagesManager.Message.CITYNOTFOUND.getMessage(), Prefix.STAFF, MessageType.ERROR, false);
+            MessagesManager.sendMessage(player, Component.translatable("omc.city.not_found"), Prefix.STAFF, MessageType.ERROR, false);
             return;
         }
 
         city.setBalance(newBalance);
-        MessagesManager.sendMessage(player, Component.text("Le solde a été modifié"), Prefix.STAFF, MessageType.SUCCESS, false);
+        MessagesManager.sendMessage(player, Component.translatable("omc.admcity.setbalance.success"), Prefix.STAFF, MessageType.SUCCESS, false);
     }
 
     @Subcommand("getBalance")
@@ -103,11 +102,11 @@ public class AdminCityCommands {
     void getBalance(Player player, String cityUUID) {
         City city = CityManager.getCity(cityUUID);
         if (city == null) {
-            MessagesManager.sendMessage(player, MessagesManager.Message.CITYNOTFOUND.getMessage(), Prefix.STAFF, MessageType.ERROR, false);
+            MessagesManager.sendMessage(player, Component.translatable("omc.city.not_found"), Prefix.STAFF, MessageType.ERROR, false);
             return;
         }
 
-        MessagesManager.sendMessage(player, Component.text("Le solde de la ville est de "+ city.getBalance()+ EconomyManager.getEconomyIcon()), Prefix.STAFF, MessageType.INFO, false);
+        MessagesManager.sendMessage(player, Component.translatable("omc.admcity.getbalance.success", Component.text(city.getBalance()), Component.text(EconomyManager.getEconomyIcon())), Prefix.STAFF, MessageType.INFO, false);
     }
 
     @Subcommand("add")
@@ -116,17 +115,17 @@ public class AdminCityCommands {
         City city = CityManager.getCity(cityUUID);
 
         if (city == null) {
-            MessagesManager.sendMessage(player, MessagesManager.Message.CITYNOTFOUND.getMessage(), Prefix.STAFF, MessageType.ERROR, false);
+            MessagesManager.sendMessage(player, Component.translatable("omc.city.not_found"), Prefix.STAFF, MessageType.ERROR, false);
             return;
         }
 
         if (CityManager.getPlayerCity(newMember.getUniqueId()) != null) {
-            MessagesManager.sendMessage(player, Component.text("Le joueur est déjà dans une ville"), Prefix.STAFF, MessageType.ERROR, false);
+            MessagesManager.sendMessage(player, Component.translatable("omc.city.player_in_city"), Prefix.STAFF, MessageType.ERROR, false);
             return;
         }
 
         city.addPlayer(newMember.getUniqueId());
-        MessagesManager.sendMessage(player, Component.text("Le joueur a été ajouté"), Prefix.STAFF, MessageType.SUCCESS, false);
+        MessagesManager.sendMessage(player, Component.translatable("omc.admcity.add.success"), Prefix.STAFF, MessageType.SUCCESS, false);
     }
 
     @Subcommand("remove")
@@ -134,17 +133,17 @@ public class AdminCityCommands {
     void remove(Player player, @Named("uuid") String cityUUID, Player member) {
         City city = CityManager.getPlayerCity(member.getUniqueId());
         if (city == null) {
-            MessagesManager.sendMessage(player, Component.text("Le joueur n'est pas dans une ville"), Prefix.STAFF, MessageType.ERROR, false);
+            MessagesManager.sendMessage(player, Component.translatable("omc.city.player_no_city"), Prefix.STAFF, MessageType.ERROR, false);
             return;
         }
 
         if (city.hasPermission(member.getUniqueId(), CPermission.OWNER)) {
-            MessagesManager.sendMessage(player, Component.text("Le joueur est le propriétaire de la ville"), Prefix.STAFF, MessageType.ERROR, false);
+            MessagesManager.sendMessage(player, Component.translatable("omc.admcity.remove.is_owner"), Prefix.STAFF, MessageType.ERROR, false);
             return;
         }
 
         city.removePlayer(member.getUniqueId());
-        MessagesManager.sendMessage(player, Component.text("Le joueur a été retiré"), Prefix.STAFF, MessageType.SUCCESS, false);
+        MessagesManager.sendMessage(player, Component.translatable("omc.admcity.remove.success"), Prefix.STAFF, MessageType.SUCCESS, false);
     }
 
     @Subcommand("getPlayer")
@@ -152,11 +151,11 @@ public class AdminCityCommands {
     void getPlayer(Player player, Player member) {
         City city = CityManager.getPlayerCity(member.getUniqueId());
         if (city == null) {
-            MessagesManager.sendMessage(player, Component.text("Le joueur n'est pas dans une ville"), Prefix.STAFF, MessageType.ERROR, false);
+            MessagesManager.sendMessage(player, Component.translatable("omc.city.player_no_city"), Prefix.STAFF, MessageType.ERROR, false);
             return;
         }
 
-        MessagesManager.sendMessage(player, Component.text("Le joueur est dans la ville "+ city.getName()+" ("+city.getUUID()+")"), Prefix.STAFF, MessageType.INFO, false);
+        MessagesManager.sendMessage(player, Component.translatable("omc.admcity.getplayer.success", Component.text(city.getName()), Component.text(city.getUUID())), Prefix.STAFF, MessageType.INFO, false);
     }
 
     @Subcommand("claim bypass")
@@ -165,19 +164,12 @@ public class AdminCityCommands {
         UUID uuid = player.getUniqueId();
         Boolean canBypass = ProtectionListener.playerCanBypass.get(uuid);
 
-        if (canBypass == null) {
+        if (canBypass == null || !canBypass) {
             ProtectionListener.playerCanBypass.put(uuid, true);
-            MessagesManager.sendMessage(player, Component.text("Vous pouvez bypass les claims"), Prefix.STAFF, MessageType.SUCCESS, false);
-            return;
-        }
-
-        if (canBypass == true) {
-            ProtectionListener.playerCanBypass.replace(uuid, false);
-            MessagesManager.sendMessage(player, Component.text("Vous avez désactivé le bypass des claims"), Prefix.STAFF, MessageType.SUCCESS, false);
+            MessagesManager.sendMessage(player, Component.translatable("omc.admcity.claim.bypass.toggled_on"), Prefix.STAFF, MessageType.SUCCESS, false);
         } else {
-            ProtectionListener.playerCanBypass.replace(uuid, true);
-            MessagesManager.sendMessage(player, Component.text("Vous avez activé le bypass des claims"), Prefix.STAFF, MessageType.SUCCESS, false);
-
+            ProtectionListener.playerCanBypass.replace(uuid, false);
+            MessagesManager.sendMessage(player, Component.translatable("omc.admcity.claim.bypass.toggled_off"), Prefix.STAFF, MessageType.SUCCESS, false);
         }
     }
 
@@ -186,14 +178,18 @@ public class AdminCityCommands {
     public void freeClaimAdd(@Named("player") Player player, @Named("claim") int claim) {
         City city = CityManager.getPlayerCity(player.getUniqueId());
         if (city==null){
-            MessagesManager.sendMessage(player, Component.text("La ville n'existe pas"), Prefix.STAFF, MessageType.ERROR, false);
+            MessagesManager.sendMessage(player, Component.translatable("omc.city.not_found"), Prefix.STAFF, MessageType.ERROR, false);
             return;
         }
         if (CityManager.freeClaim.get(city.getUUID())==null){
             CityManager.freeClaim.put(city.getUUID(), claim);
+            // Add success message for initial setting? Or just let add cover it?
+            MessagesManager.sendMessage(player, Component.translatable("omc.admcity.freeclaim.add.success", Component.text(claim), Component.text(city.getName())), Prefix.STAFF, MessageType.SUCCESS, false);
             return;
         }
-        CityManager.freeClaim.replace(city.getUUID(), CityManager.freeClaim.get(city.getUUID()) + claim);
+        int newClaimCount = CityManager.freeClaim.get(city.getUUID()) + claim;
+        CityManager.freeClaim.replace(city.getUUID(), newClaimCount);
+        MessagesManager.sendMessage(player, Component.translatable("omc.admcity.freeclaim.add.success_total", Component.text(claim), Component.text(city.getName()), Component.text(newClaimCount)), Prefix.STAFF, MessageType.SUCCESS, false);
     }
 
     @Subcommand("freeclaim remove")
@@ -201,42 +197,64 @@ public class AdminCityCommands {
     public void freeClaimRemove(@Named("player") Player player, @Named("claim") int claim) {
         City city = CityManager.getPlayerCity(player.getUniqueId());
         if (city==null){
-            MessagesManager.sendMessage(player, Component.text("La ville n'existe pas"), Prefix.STAFF, MessageType.ERROR, false);
+            MessagesManager.sendMessage(player, Component.translatable("omc.city.not_found"), Prefix.STAFF, MessageType.ERROR, false);
             return;
         }
-        if (CityManager.freeClaim.get(city.getUUID()) - claim <= 0){
+        if (CityManager.freeClaim.get(city.getUUID()) == null || CityManager.freeClaim.get(city.getUUID()) <= 0) {
+             MessagesManager.sendMessage(player, Component.translatable("omc.city.no_free_claims"), Prefix.STAFF, MessageType.ERROR, false);
+             return;
+        }
+
+        int currentClaims = CityManager.freeClaim.get(city.getUUID());
+        int newClaimCount = currentClaims - claim;
+
+        if (newClaimCount <= 0){
             CityManager.freeClaim.remove(city.getUUID());
+            MessagesManager.sendMessage(player, Component.translatable("omc.admcity.freeclaim.remove.success_all", Component.text(city.getName())), Prefix.STAFF, MessageType.SUCCESS, false);
             return;
         }
-        CityManager.freeClaim.replace(city.getUUID(),CityManager.freeClaim.get(city.getUUID()) - claim);
+        CityManager.freeClaim.replace(city.getUUID(), newClaimCount);
+        MessagesManager.sendMessage(player, Component.translatable("omc.admcity.freeclaim.remove.success_total", Component.text(claim), Component.text(city.getName()), Component.text(newClaimCount)), Prefix.STAFF, MessageType.SUCCESS, false);
+
     }
 
     @Subcommand("freeclaim delete")
-    @CommandPermission("omc.admins.commands.admincity.freeclaim.remove")
+    @CommandPermission("omc.admins.commands.admincity.freeclaim.remove") // Permission seems to match remove
     public void freeClaimDelete(@Named("player") Player player) {
         City city = CityManager.getPlayerCity(player.getUniqueId());
         if (city==null){
-            MessagesManager.sendMessage(player, Component.text("La ville n'existe pas"), Prefix.STAFF, MessageType.ERROR, false);
+            MessagesManager.sendMessage(player, Component.translatable("omc.city.not_found"), Prefix.STAFF, MessageType.ERROR, false);
             return;
         }
-        CityManager.freeClaim.remove(city.getUUID());
+        if (CityManager.freeClaim.containsKey(city.getUUID())) {
+             CityManager.freeClaim.remove(city.getUUID());
+             MessagesManager.sendMessage(player, Component.translatable("omc.admcity.freeclaim.delete.success", Component.text(city.getName())), Prefix.STAFF, MessageType.SUCCESS, false);
+        } else {
+             MessagesManager.sendMessage(player, Component.translatable("omc.city.no_free_claims"), Prefix.STAFF, MessageType.ERROR, false);
+        }
     }
 
     @Subcommand("mascots remove")
     @CommandPermission("omc.admins.commands.admcity.mascots.remove")
     public void forceRemoveMascots (Player sender, @Named("player") Player target) throws SQLException {
-        List<String> uuidList = CityManager.getAllCityUUIDs();
         City city = CityManager.getPlayerCity(target.getUniqueId());
 
         if (city != null){
             String city_uuid = city.getUUID();
+            // The uuidList check here is redundant if we get the city from the player target.
+            // If the player has a city, the city_uuid must be in the list of cities.
+            // If the intention was to remove by city UUID directly, the command signature should be different.
+            // Assuming the command is for the target player's city:
 
-            if (uuidList.contains(city_uuid)){
-                MascotsManager.removeMascotsFromCity(city_uuid);
-                return;
+            if (MascotUtils.mascotsContains(city_uuid)) { // Check if the city actually has a mascot
+                 MascotsManager.removeMascotsFromCity(city_uuid);
+                 MessagesManager.sendMessage(sender, Component.translatable("omc.admcity.mascots.remove.success", Component.text(city.getName())), Prefix.STAFF, MessageType.SUCCESS, false);
+            } else {
+                 MessagesManager.sendMessage(sender, Component.translatable("omc.admcity.mascots.remove.no_mascot", Component.text(city.getName())), Prefix.STAFF, MessageType.ERROR, false);
             }
 
-            MessagesManager.sendMessage(sender, Component.text("§cVille inexistante"), Prefix.CITY, MessageType.ERROR, false);
+        } else {
+             MessagesManager.sendMessage(sender, Component.translatable("omc.city.player_no_city"), Prefix.STAFF, MessageType.ERROR, false);
         }
     }
 
@@ -246,25 +264,32 @@ public class AdminCityCommands {
         City city = CityManager.getPlayerCity(target.getUniqueId());
 
         if (city==null){
-            MessagesManager.sendMessage(sender, Component.text("§cLe joueur n'a pas de ville"), Prefix.CITY, MessageType.ERROR, false);
+            MessagesManager.sendMessage(sender, Component.translatable("omc.city.player_no_city"), Prefix.STAFF, MessageType.ERROR, false);
             return;
         }
 
         String city_uuid = city.getUUID();
 
-        if (!MascotUtils.getMascotState(city_uuid)){
-            MessagesManager.sendMessage(sender, Component.text("§cLa mascotte est en immunité forcée"), Prefix.CITY, MessageType.ERROR, false);
+        if (!MascotUtils.mascotsContains(city_uuid)) { // Check if the city actually has a mascot
+             MessagesManager.sendMessage(sender, Component.translatable("omc.admcity.mascots.immunityoff.no_mascot", Component.text(city.getName())), Prefix.STAFF, MessageType.ERROR, false);
+             return;
+        }
+
+        if (!MascotUtils.getMascotImmunity(city_uuid)){ // Check if it's already NOT immune (meaning state is false)
+             MessagesManager.sendMessage(sender, Component.translatable("omc.admcity.mascots.immunityoff.already_off", Component.text(city.getName())), Prefix.STAFF, MessageType.ERROR, false);
             return;
         }
 
-        if (MascotUtils.getMascotImmunity(city_uuid)){
-            MascotUtils.changeMascotImmunity(city_uuid, false);
-        }
-        DynamicCooldownManager.clear(city_uuid, "mascot:immunity");
-        UUID mascotUUID = MascotUtils.getMascotUUIDOfCity(city_uuid);
+
+        MascotUtils.changeMascotImmunity(city_uuid, false);
+        DynamicCooldownManager.clear(city_uuid, "mascot:immunity"); // Clears the player cooldown, maybe need city cooldown?
+        UUID mascotUUID = MascotUtils.getMascotUUIDOfCity(city_uuid); // Assuming this retrieves the actual entity UUID
         if (mascotUUID!=null){
             Entity mob = Bukkit.getEntity(mascotUUID);
-            if (mob!=null) mob.setGlowing(false);
+            if (mob!=null) mob.setGlowing(false); // Remove glowing effect if entity is loaded
         }
+
+        MessagesManager.sendMessage(sender, Component.translatable("omc.admcity.mascots.immunityoff.success", Component.text(city.getName())), Prefix.STAFF, MessageType.SUCCESS, false);
+
     }
 }

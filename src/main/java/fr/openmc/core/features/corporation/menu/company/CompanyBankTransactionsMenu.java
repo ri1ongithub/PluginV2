@@ -11,6 +11,8 @@ import fr.openmc.core.utils.api.ItemAdderApi;
 import fr.openmc.core.utils.api.PapiApi;
 import fr.openmc.core.utils.customitems.CustomItemRegistry;
 import me.clip.placeholderapi.PlaceholderAPI;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -54,17 +56,21 @@ public class CompanyBankTransactionsMenu extends PaginatedMenu {
             TransactionData transaction = transactions.get(i);
             int finalI = i;
             items.add(new ItemBuilder(this, Material.PAPER, itemMeta -> {
-                itemMeta.setDisplayName("§eTransaction #" + finalI);
-                List<String> lore = new ArrayList<>(List.of(
-                        "§7■ Date: §f" + new SimpleDateFormat("MM/dd/yyyy").format(timestamp),
-                        "§7■ Nature: §f" + transaction.nature(),
-                        "§7■ Par: §f" + Bukkit.getOfflinePlayer(transaction.sender()).getName()
-                ));
+                itemMeta.displayName(Component.text("Transaction #" + finalI).color(NamedTextColor.YELLOW));
+                List<Component> lore = new ArrayList<>();
+                lore.add(Component.text("■ Date: ").color(NamedTextColor.GRAY)
+                    .append(Component.text(new SimpleDateFormat("MM/dd/yyyy").format(timestamp)).color(NamedTextColor.WHITE)));
+                lore.add(Component.text("■ Nature: ").color(NamedTextColor.GRAY)
+                    .append(Component.text(transaction.nature()).color(NamedTextColor.WHITE)));
+                lore.add(Component.text("■ Par: ").color(NamedTextColor.GRAY)
+                    .append(Component.text(Bukkit.getOfflinePlayer(transaction.sender()).getName()).color(NamedTextColor.WHITE)));
                 if (transaction.place() != null && !transaction.place().isEmpty()) {
-                    lore.add("§7■ Lieu: §f" + transaction.place());
+                    lore.add(Component.text("■ Lieu: ").color(NamedTextColor.GRAY)
+                        .append(Component.text(transaction.place()).color(NamedTextColor.WHITE)));
                 }
-                lore.add("§7■ Montant: " + EconomyManager.getInstance().getFormattedNumber(transaction.value()));
-                itemMeta.setLore(lore);
+                lore.add(Component.text("■ Montant: ").color(NamedTextColor.GRAY)
+                    .append(Component.text(EconomyManager.getInstance().getFormattedNumber(transaction.value()))));
+                itemMeta.lore(lore);
             }));
         }
         return items;
@@ -73,16 +79,22 @@ public class CompanyBankTransactionsMenu extends PaginatedMenu {
     @Override
     public Map<Integer, ItemStack> getButtons() {
         Map<Integer, ItemStack> buttons = new HashMap<>();
-        buttons.put(49, new ItemBuilder(this, CustomItemRegistry.getByName("menu:close_button").getBest(), itemMeta -> itemMeta.setDisplayName("§7Fermer"))
-                .setCloseButton());
-        ItemBuilder nextPageButton = new ItemBuilder(this, CustomItemRegistry.getByName("menu:next_page").getBest(), itemMeta -> itemMeta.setDisplayName("§aPage suivante"));
+        buttons.put(49, new ItemBuilder(this, CustomItemRegistry.getByName("menu:close_button").getBest(), itemMeta -> 
+            itemMeta.displayName(Component.text("Fermer").color(NamedTextColor.GRAY)))
+            .setCloseButton());
+
+        ItemBuilder nextPageButton = new ItemBuilder(this, CustomItemRegistry.getByName("menu:next_page").getBest(), itemMeta -> 
+            itemMeta.displayName(Component.text("Page suivante").color(NamedTextColor.GREEN)));
+
         if ((getPage() == 0 && isLastPage()) || company.getShops().isEmpty()) {
-            buttons.put(48, new ItemBuilder(this, CustomItemRegistry.getByName("menu:previous_page").getBest(), itemMeta -> itemMeta.setDisplayName("§cRetour"))
-                    .setNextMenu(new CompanyMenu(getOwner(), company, false)));
+            buttons.put(48, new ItemBuilder(this, CustomItemRegistry.getByName("menu:previous_page").getBest(), itemMeta -> 
+                itemMeta.displayName(Component.text("Retour").color(NamedTextColor.RED)))
+                .setNextMenu(new CompanyMenu(getOwner(), company, false)));
             buttons.put(50, nextPageButton);
         } else {
-            buttons.put(48, new ItemBuilder(this, CustomItemRegistry.getByName("menu:previous_page").getBest(), itemMeta -> itemMeta.setDisplayName("§cPage précédente"))
-                    .setPreviousPageButton());
+            buttons.put(48, new ItemBuilder(this, CustomItemRegistry.getByName("menu:previous_page").getBest(), itemMeta -> 
+                itemMeta.displayName(Component.text("Page précédente").color(NamedTextColor.RED)))
+                .setPreviousPageButton());
             buttons.put(50, nextPageButton.setNextPageButton());
         }
         return buttons;

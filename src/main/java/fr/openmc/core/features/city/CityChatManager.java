@@ -55,15 +55,14 @@ public class CityChatManager {
 	public static void sendCityChatMessage(Player sender, Component message) {
 		City city = CityManager.getPlayerCity(sender.getUniqueId());
 		if (city == null) {
-			MessagesManager.sendMessage(sender, Component.text("Tu n'habites dans aucune ville"), Prefix.CITY, MessageType.ERROR, false);
+			MessagesManager.sendMessage(sender, Component.translatable("omc.city.chat.no_city"), Prefix.CITY, MessageType.ERROR, false);
 			return;
 		}
 		
-		Component msg_component = Component.text("#ville ").color(NamedTextColor.GOLD).append(sender.displayName().color(NamedTextColor.WHITE)).append(
-				Component.text(" » ").color(NamedTextColor.GRAY).append(
-						message.color(NamedTextColor.WHITE)
-				)
-		);
+		Component msg_component = Component.text("#ville ").color(NamedTextColor.GOLD)
+			.append(sender.displayName().color(NamedTextColor.WHITE))
+			.append(Component.translatable("omc.city.chat.separator").color(NamedTextColor.GRAY))
+			.append(message.color(NamedTextColor.WHITE));
 		
 		for (UUID uuid : city.getMembers()) {
 			OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);

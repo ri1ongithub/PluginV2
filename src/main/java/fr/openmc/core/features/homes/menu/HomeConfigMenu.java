@@ -67,7 +67,7 @@ public class HomeConfigMenu extends Menu {
 
             return content;
         } catch (Exception e) {
-            MessagesManager.sendMessage(player, Component.text("§cUne Erreur est survenue, veuillez contacter le Staff"), Prefix.OPENMC, MessageType.ERROR, false);
+            MessagesManager.sendMessage(player, Component.translatable("omc.homes.menu.error"), Prefix.OPENMC, MessageType.ERROR, false);
             player.closeInventory();
             e.printStackTrace();
         }

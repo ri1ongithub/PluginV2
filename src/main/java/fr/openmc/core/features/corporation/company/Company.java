@@ -383,7 +383,7 @@ public class Company {
         removeMerchant(uuid);
         Player player = Bukkit.getPlayer(uuid);
         if (player != null) {
-            MessagesManager.sendMessage(player, Component.text("§cVous avez été renvoyé de l'entreprise §6§l" + name), Prefix.ENTREPRISE, MessageType.INFO, false);
+            MessagesManager.sendMessage(player, Component.translatable("omc.corp.fired", Component.text(name)), Prefix.CORPORATION, MessageType.INFO, false);
         }
     }
 

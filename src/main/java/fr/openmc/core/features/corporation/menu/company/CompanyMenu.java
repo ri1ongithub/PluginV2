@@ -10,6 +10,9 @@ import fr.openmc.core.utils.api.ItemAdderApi;
 import fr.openmc.core.utils.api.PapiApi;
 import fr.openmc.core.utils.customitems.CustomItemRegistry;
 import me.clip.placeholderapi.PlaceholderAPI;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -47,11 +50,11 @@ public class CompanyMenu extends PaginatedMenu {
         List<ItemStack> items = new ArrayList<>();
         for (UUID merchant : merchants) {
             items.add(new ItemBuilder(this, ItemUtils.getPlayerSkull(merchant), itemMeta -> {
-                itemMeta.setDisplayName("§e" + Bukkit.getOfflinePlayer(merchant).getName());
+                itemMeta.displayName(Component.translatable("omc.company.menu.merchant.name", Bukkit.getOfflinePlayer(merchant).getName()));
                 MerchantData merchantData = company.getMerchants().get(merchant);
                 itemMeta.setLore(List.of(
-                        "§7■ A déposé §a" + merchantData.getAllDepositedItemsAmount() + " items",
-                        "§7■ A gagné §a" + merchantData.getMoneyWon() + "€"
+                        Component.translatable("omc.company.menu.merchant.items_deposited", Component.text(merchantData.getAllDepositedItemsAmount())),
+                        Component.translatable("omc.company.menu.merchant.money_earned", Component.text(merchantData.getMoneyWon()))
                 ));
             }));
         }
@@ -62,33 +65,35 @@ public class CompanyMenu extends PaginatedMenu {
     public Map<Integer, ItemStack> getButtons() {
         Map<Integer, ItemStack> buttons = new HashMap<>();
 
-        ItemBuilder closeButton = new ItemBuilder(this, CustomItemRegistry.getByName("menu:close_button").getBest(), itemMeta -> itemMeta.setDisplayName("§7Fermer")).setCloseButton();
-        ItemBuilder backButton = new ItemBuilder(this, CustomItemRegistry.getByName("menu:previous_page").getBest(), itemMeta -> itemMeta.setDisplayName("§7Retour")).setBackButton();
+        buttons.put(49, new ItemBuilder(this, CustomItemRegistry.getByName("menu:close_button").getBest(), 
+            itemMeta -> itemMeta.displayName(Component.text("Fermer").color(NamedTextColor.DARK_RED)))
+                .setCloseButton());
 
-        buttons.put(49, isBackButton ? backButton : closeButton);
-
-        buttons.put(48, new ItemBuilder(this, CustomItemRegistry.getByName("menu:previous_page").getBest(), itemMeta -> itemMeta.setDisplayName("§cPage précédente"))
+        buttons.put(48, new ItemBuilder(this, CustomItemRegistry.getByName("menu:previous_page").getBest(), 
+            itemMeta -> itemMeta.displayName(Component.translatable("omc.menus.buttons.previous")))
                 .setPreviousPageButton());
 
-        buttons.put(50, new ItemBuilder(this,  CustomItemRegistry.getByName("menu:next_page").getBest(), itemMeta -> itemMeta.setDisplayName("§aPage suivante"))
+        buttons.put(50, new ItemBuilder(this, CustomItemRegistry.getByName("menu:next_page").getBest(), 
+            itemMeta -> itemMeta.displayName(Component.translatable("omc.menus.buttons.next")))
                 .setNextPageButton());
 
         ItemStack ownerItem;
-
         if (company.getOwner().isPlayer()) {
             ownerItem = new ItemBuilder(this, company.getHead(), itemMeta -> {
-                itemMeta.setDisplayName("§6§l" + Bukkit.getOfflinePlayer(company.getOwner().getPlayer()).getName());
-                itemMeta.setLore(List.of(
-                        "§7■ - Joueur -",
-                        "§7■ Marchants : " + company.getMerchants().size()
+                itemMeta.displayName(Component.translatable("omc.company.menu.owner.player.name", 
+                    Component.text(Bukkit.getOfflinePlayer(company.getOwner().getPlayer()).getName())));
+                itemMeta.lore(List.of(
+                    Component.translatable("omc.company.menu.owner.player.type"),
+                    Component.translatable("omc.company.menu.owner.merchants", Component.text(company.getMerchants().size()))
                 ));
             });
         } else {
             ownerItem = new ItemBuilder(this, company.getHead(), itemMeta -> {
-                itemMeta.setDisplayName("§6§l" + company.getOwner().getCity().getName());
-                itemMeta.setLore(List.of(
-                        "§7■ - Team -",
-                        "§7■ Marchants : " + company.getMerchants().size()
+                itemMeta.displayName(Component.translatable("omc.company.menu.owner.city.name", 
+                    Component.text(company.getOwner().getCity().getName())));
+                itemMeta.lore(List.of(
+                    Component.translatable("omc.company.menu.owner.city.type"),
+                    Component.translatable("omc.company.menu.owner.merchants", Component.text(company.getMerchants().size()))
                 ));
             });
         }
@@ -96,19 +101,19 @@ public class CompanyMenu extends PaginatedMenu {
         buttons.put(4, ownerItem);
 
         ItemBuilder bankButton = new ItemBuilder(this, Material.GOLD_INGOT, itemMeta -> {
-            itemMeta.setDisplayName("§6Banque d'entreprise");
-            itemMeta.setLore(List.of(
-                    "§7■ Solde: §a" + company.getBalance() + "€",
-                    "§7■ Chiffre d'affaires: §a" + company.getTurnover() + "€",
-                    "§7■ Cliquez pour voir les transactions"
+            itemMeta.displayName(Component.translatable("omc.company.menu.bank.title"));
+            itemMeta.lore(List.of(
+                Component.translatable("omc.company.menu.bank.balance", Component.text(company.getBalance())),
+                Component.translatable("omc.company.menu.bank.turnover", Component.text(company.getTurnover())),
+                Component.translatable("omc.company.menu.bank.click_transactions")
             ));
         });
 
         ItemBuilder shopsButton = new ItemBuilder(this, Material.BARREL, itemMeta -> {
-            itemMeta.setDisplayName("§6Shops");
-            itemMeta.setLore(List.of(
-                    "§7■ Nombre: §a" + company.getShops().size(),
-                    "§7■ Cliquez pour voir les shops"
+            itemMeta.displayName(Component.translatable("omc.company.menu.shops.title"));
+            itemMeta.lore(List.of(
+                Component.translatable("omc.company.menu.shops.count", Component.text(company.getShops().size())),
+                Component.translatable("omc.company.menu.shops.click_view")
             ));
         });
 

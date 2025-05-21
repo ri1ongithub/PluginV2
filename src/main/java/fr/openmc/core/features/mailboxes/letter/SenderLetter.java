@@ -23,9 +23,12 @@ public class SenderLetter extends ItemStack {
         skullMeta.setOwningPlayer(player);
         skullMeta.displayName(getStatus(refused));
         ArrayList<Component> lore = new ArrayList<>();
-        lore.add(colorText("➡ Cliquez pour annuler", NamedTextColor.YELLOW, true));
+        lore.add(colorText(Component.translatable("omc.mailbox.letter.click_to_cancel").toString(), NamedTextColor.YELLOW, true));
         lore.add(getPlayerName(player));
-        lore.add(colorText(formatRelativeDate(sentAt) + ", " + itemsCount + " " + getItemCount(itemsCount), NamedTextColor.DARK_GRAY, true));
+        lore.add(colorText(Component.translatable("omc.mailbox.letter.info", 
+            Component.text(formatRelativeDate(sentAt)),
+            Component.text(itemsCount),
+            Component.text(getItemCount(itemsCount))).toString(), NamedTextColor.DARK_GRAY, true));
         skullMeta.lore(lore);
         this.setItemMeta(skullMeta);
     }
@@ -33,9 +36,9 @@ public class SenderLetter extends ItemStack {
     public static Component getStatus(boolean refused) {
         NamedTextColor color = refused ? NamedTextColor.DARK_RED : NamedTextColor.DARK_AQUA;
         Component status = Component.text("[", NamedTextColor.DARK_GRAY)
-                                    .append(Component.text(refused ? "❌" : "⌚", color))
-                                    .append(Component.text("] ", NamedTextColor.DARK_GRAY))
-                                    .append(Component.text(refused ? "Refusée" : "En attente", color));
+            .append(Component.translatable(refused ? "omc.mailbox.letter.status.refused_symbol" : "omc.mailbox.letter.status.pending_symbol").color(color))
+            .append(Component.text("] ", NamedTextColor.DARK_GRAY))
+            .append(Component.translatable(refused ? "omc.mailbox.letter.status.refused" : "omc.mailbox.letter.status.pending").color(color));
         return nonItalic(status);
     }
 

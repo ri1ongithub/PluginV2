@@ -93,13 +93,13 @@ public class ShopListener implements Listener {
                 } else {
                     if (!company.hasShop(shop.getUuid())){
                         e.setCancelled(true);
-                        MessagesManager.sendMessage(e.getPlayer(), Component.text("Tu n'es pas dans l'entrprise possédant ce shop"), Prefix.SHOP, MessageType.INFO, false);
+                        MessagesManager.sendMessage(e.getPlayer(), Component.translatable("omc.shop.error.not_in_company"), Prefix.SHOP, MessageType.INFO, false);
                         return;
                     }
 
                     if (!company.hasPermission(e.getPlayer().getUniqueId(), CorpPermission.SUPPLY)){
                         e.setCancelled(true);
-                        MessagesManager.sendMessage(e.getPlayer(), Component.text("Tu n'as pas la permission de réapprovisionner le shop"), Prefix.SHOP, MessageType.INFO, false);
+                        MessagesManager.sendMessage(e.getPlayer(), Component.translatable("omc.shop.error.no_supply_permission"), Prefix.SHOP, MessageType.INFO, false);
                         return;
                     }
                 }
@@ -116,7 +116,7 @@ public class ShopListener implements Listener {
             Company company = CompanyManager.getInstance().getCompany(playerUUID);
             if (company!=null){
                 if (!company.hasPermission(playerUUID, CorpPermission.SUPPLY)){
-                    MessagesManager.sendMessage(player, Component.text("Vous n'avez pas la permission de réapprovisionner les shops dans l'entreprise"), Prefix.SHOP, MessageType.INFO, false);
+                    MessagesManager.sendMessage(player, Component.translatable("omc.shop.error.no_company_supply_permission"), Prefix.SHOP, MessageType.INFO, false);
                     player.closeInventory();
                     return;
                 }

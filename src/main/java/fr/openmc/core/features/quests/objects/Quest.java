@@ -244,7 +244,7 @@ public class Quest {
                         reward.giveReward(player);
                     } else {
                         addPendingRewards(uuid, tierIndex, tier.getRewards());
-                        MessagesManager.sendMessage(player, Component.text("§cVous n'avez pas assez de place dans votre inventaire pour recevoir la récompense !"), Prefix.QUEST, MessageType.WARNING, false);
+                        MessagesManager.sendMessage(player, Component.translatable("omc.shop.error.not_enough_space"), Prefix.QUEST, MessageType.WARNING, false);
                     }
                 }
 
@@ -257,8 +257,11 @@ public class Quest {
                         .append(Component.text(" ✦", TextColor.color(15770808)));
 
                 Component titleSub = Component.text(this.name, TextColor.color(8087790));
-                String message = isLastTier ? "§6★ §aQuête terminée ! §e" + this.name + " §7est maintenant complète !" : "§e★ §aPalier " + (tierIndex + 1) + " §7de §e" + this.name + " §avalidé !";
-
+                // String message = isLastTier ? "§6★ §aQuête terminée ! §e" + this.name + " §7est maintenant complète !" : "§e★ §aPalier " + (tierIndex + 1) + " §7de §e" + this.name + " §avalidé !";
+                Component message = isLastTier
+                        ? Component.translatable("omc.quests.completed", Component.text(this.name))
+                        : Component.translatable("omc.quests.tier_completed", Component.text(this.name), Component.text(tierIndex + 1));
+                
                 player.showTitle(Title.title(
                         titleMain,
                         titleSub,
@@ -266,7 +269,7 @@ public class Quest {
                 );
                 player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0F, 1.2F);
                 player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 0.7F, 1.1F);
-                MessagesManager.sendMessage(player, Component.text(message), Prefix.QUEST, MessageType.SUCCESS, true);
+                MessagesManager.sendMessage(player, message, Prefix.QUEST, MessageType.SUCCESS, true);
             } else {
                 addPendingRewards(uuid, tierIndex, tier.getRewards());
             }

@@ -231,12 +231,12 @@ public class ScoreboardManager implements Listener {
         int phase = data.getPhase();
         if (phase != 1) {
             setLine(scoreboard, objective, line--, Component.text(" ")); // Spacer
-            setLine(scoreboard, objective, line--, Component.text("§8• §6§lCONTEST!")); // Contest title
+            setLine(scoreboard, objective, line--, Component.translatable("omc.scoreboard.contest_title"));
 
             // Camp vs Camp line
-            Component contestLine = Component.text("§8• §f"+
-                    ChatColor.valueOf(data.getColor1()) + data.getCamp1() + " §8VS " +
-                            ChatColor.valueOf(data.getColor2()) + data.getCamp2());
+            Component contestLine = Component.translatable("omc.scoreboard.contest_camps",
+                    Component.text(ChatColor.valueOf(data.getColor1()) + data.getCamp1()),
+                    Component.text(ChatColor.valueOf(data.getColor2()) + data.getCamp2()));
             setLine(scoreboard, objective, line--, contestLine);
 
             // Contest end timer

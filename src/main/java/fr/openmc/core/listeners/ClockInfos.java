@@ -30,6 +30,6 @@ public class ClockInfos implements Listener {
         String hoursAsText = String.format("%02d", hours);
 
         // J12 03h49
-        player.sendActionBar(Component.text("J"+daysPassed+" "+hoursAsText+"h"+minutesAsText));
+        player.sendActionBar(Component.translatable("omc.clock.info", Component.text("J" + daysPassed), Component.text(hoursAsText + "h" + minutesAsText)));
     }
 }

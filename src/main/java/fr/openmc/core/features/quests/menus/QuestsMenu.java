@@ -188,19 +188,19 @@ public class QuestsMenu extends Menu {
         lore.add(bar);
 
         if (hasPendingRewards) {
-            lore.add(Component.text("§d✶ §dRécompenses en attente:"));
+            lore.add(Component.translatable("omc.quests.menu.pending_rewards"));
             for (Integer tierIndex : pendingQuestIndexes) {
                 if (tierIndex < quest.getTiers().size()) {
                     QuestTier tier = quest.getTiers().get(tierIndex);
-                    lore.add(Component.text("  §5➤ §dPalier " + (tierIndex + 1) + ":"));
+                    lore.add(Component.translatable("omc.quests.menu.tier", Component.text(tierIndex + 1)));
 
                     for (QuestReward reward : tier.getRewards()) {
                         if (reward instanceof QuestItemReward itemReward) {
                             ItemStack rewardItem = itemReward.getItemStack();
                             String itemName = PlainTextComponentSerializer.plainText().serialize(rewardItem.displayName());
-                            lore.add(Component.text("    §7- §f" + itemName + " §7x" + rewardItem.getAmount()));
+                            lore.add(Component.translatable("omc.quests.menu.reward.item", Component.text(itemName), Component.text(rewardItem.getAmount())));
                         } else if (reward instanceof QuestMoneyReward moneyReward) {
-                            lore.add(Component.text("    §7- §6" + EconomyManager.getFormattedSimplifiedNumber(moneyReward.getAmount()) + " §f" + EconomyManager.getEconomyIcon()));
+                            lore.add(Component.translatable("omc.quests.menu.reward.money", Component.text(EconomyManager.getFormattedSimplifiedNumber(moneyReward.getAmount())), Component.text(EconomyManager.getEconomyIcon())));
                         }
                     }
                 }
@@ -208,21 +208,21 @@ public class QuestsMenu extends Menu {
         }
 
         if (currentTier != null) {
-            lore.add(Component.text("§6➤ §eRécompenses:"));
+            lore.add(Component.translatable("omc.quests.menu.rewards"));
             for (QuestReward reward : currentTier.getRewards()) {
                 if (reward instanceof QuestItemReward itemReward) {
                     ItemStack rewardItem = itemReward.getItemStack();
                     String itemName = PlainTextComponentSerializer.plainText().serialize(rewardItem.displayName());
-                    lore.add(Component.text("  §7- §f" + itemName + " §7x" + rewardItem.getAmount()));
+                    lore.add(Component.translatable("omc.quests.menu.reward.item", Component.text(itemName), Component.text(rewardItem.getAmount())));
                 } else if (reward instanceof QuestMoneyReward moneyReward) {
-                    lore.add(Component.text("  §7- §6" + EconomyManager.getFormattedSimplifiedNumber(moneyReward.getAmount()) + " §f" + EconomyManager.getEconomyIcon()));
+                    lore.add(Component.translatable("omc.quests.menu.reward.money", Component.text(EconomyManager.getFormattedSimplifiedNumber(moneyReward.getAmount())), Component.text(EconomyManager.getEconomyIcon())));
                 }
             }
-            lore.add(Component.text(""));
+            lore.add(Component.empty());
         }
 
         if (isCompleted) {
-            lore.add(Component.text("  §aQuête complétée !  "));
+            lore.add(Component.translatable("omc.quests.menu.completed"));
         } else if (currentTier != null) {
             int progressPercent = (int) Math.min(100.0F, Math.ceil((double) progress / target * 100.0F));
             int barLength = 26;
@@ -236,30 +236,29 @@ public class QuestsMenu extends Menu {
 
             progressBar.append("§m§8]");
 
-            lore.add(Component.text("§fProgrès: §e" + progress + "§6/§e" + target + " §7(" + progressPercent + "%)"));
+            lore.add(Component.translatable("omc.quests.menu.progress", Component.text(progress), Component.text(target), Component.text(progressPercent + "%")));
             lore.add(Component.text(progressBar.toString()));
-            lore.add(Component.text(""));
-            lore.add(Component.text("§6➤ §eObjectif actuel:"));
+            lore.add(Component.empty());
+            lore.add(Component.translatable("omc.quests.menu.current_objective"));
             lore.add(Component.text("  §f" + quest.getDescription(playerUUID)));
 
             if (currentTier.getSteps() != null && !currentTier.getSteps().isEmpty()) {
-                lore.add(Component.text(""));
-                lore.add(Component.text("§6◆ §eAvancement:"));
+                lore.add(Component.empty());
+                lore.add(Component.translatable("omc.quests.menu.progress_steps"));
 
                 for (int i = 0; i < currentTier.getSteps().size(); i++) {
                     QuestStep step = currentTier.getSteps().get(i);
                     boolean stepCompleted = step.isCompleted(playerUUID);
 
                     String stepIcon = stepCompleted ? "§a✅" : "§c❌";
-                    String stepDescription = step.getDescription();
-                    lore.add(Component.text("  §7* " + stepDescription + " " + stepIcon));
+                    lore.add(Component.translatable("omc.quests.menu.step", Component.text(step.getDescription()), Component.text(stepIcon)));
                 }
             }
 
             if (currentTierIndex < tiersTotal - 1) {
                 QuestTier nextTier = quest.getTiers().get(currentTierIndex + 1);
                 lore.add(bar);
-                lore.add(Component.text("§7◇ §8Prochain tier:"));
+                lore.add(Component.translatable("omc.quests.menu.next_tier"));
                 lore.add(Component.text("  §8" + quest.getNextTierDescription(playerUUID)));
 
                 if (nextTier.getSteps() != null && !nextTier.getSteps().isEmpty()) {
@@ -279,11 +278,11 @@ public class QuestsMenu extends Menu {
     static {
         LEFT_ARROW = new ItemStack(Material.ARROW);
         ItemMeta leftArrowMeta = LEFT_ARROW.getItemMeta();
-        leftArrowMeta.displayName(Component.text("§aPage précédente"));
+        leftArrowMeta.displayName(Component.translatable("omc.quests.menu.previous_page"));
         LEFT_ARROW.setItemMeta(leftArrowMeta);
         RIGHT_ARROW = new ItemStack(Material.ARROW);
         ItemMeta rightArrowMeta = RIGHT_ARROW.getItemMeta();
-        rightArrowMeta.displayName(Component.text("§aPage suivante"));
+        rightArrowMeta.displayName(Component.translatable("omc.quests.menu.next_page"));
         RIGHT_ARROW.setItemMeta(rightArrowMeta);
     }
 }

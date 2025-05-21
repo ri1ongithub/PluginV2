@@ -190,7 +190,7 @@ public class LeaderboardManager {
         if (playtimeMap.isEmpty()) {
             return Component.translatable("omc.leaderboard.playtime.empty").color(NamedTextColor.RED);
         }
-        Component text = Component.text("--- Leaderboard du temps de jeu -----------")
+        Component text = Component.translatable("omc.leaderboard.playtime.title")
                 .color(NamedTextColor.DARK_PURPLE)
                 .decorate(TextDecoration.BOLD);
         for (var entry : playtimeMap.entrySet()) {

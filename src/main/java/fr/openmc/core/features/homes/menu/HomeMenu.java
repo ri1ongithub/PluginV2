@@ -92,7 +92,7 @@ public class HomeMenu extends PaginatedMenu {
 
             return items;
             } catch (Exception e) {
-                MessagesManager.sendMessage(getOwner(), Component.text("§cUne Erreur est survenue, veuillez contacter le Staff"), Prefix.OPENMC, MessageType.ERROR, false);
+                MessagesManager.sendMessage(getOwner(), Component.translatable("omc.homes.menu.error"), Prefix.OPENMC, MessageType.ERROR, false);
                 getOwner().closeInventory();
                 e.printStackTrace();
             }

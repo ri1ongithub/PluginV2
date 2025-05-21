@@ -4,6 +4,7 @@ import fr.openmc.core.features.city.CPermission;
 import fr.openmc.core.features.city.City;
 import fr.openmc.core.features.city.CityManager;
 import fr.openmc.core.features.city.menu.ChestMenu;
+import fr.openmc.core.features.economy.EconomyManager;
 import fr.openmc.core.utils.messages.MessageType;
 import fr.openmc.core.utils.messages.MessagesManager;
 import fr.openmc.core.utils.messages.Prefix;
@@ -19,17 +20,17 @@ public class CityChestCommand {
     void chest(Player player, @Optional @Named("page") @Range(min=0) Integer page) {
         City city = CityManager.getPlayerCity(player.getUniqueId());
         if (city == null) {
-            MessagesManager.sendMessage(player, Component.text("Vous n'êtes pas dans une ville"), Prefix.CITY, MessageType.ERROR, false);
+            MessagesManager.sendMessage(player, Component.translatable("omc.city.player_no_city"), Prefix.CITY, MessageType.ERROR, false);
             return;
         }
 
         if (!city.hasPermission(player.getUniqueId(), CPermission.CHEST)) {
-            MessagesManager.sendMessage(player, Component.text("Vous n'avez pas les permissions de voir le coffre"), Prefix.CITY, MessageType.ERROR, false);
+            MessagesManager.sendMessage(player, Component.translatable("omc.city.chest.no_permission_view"), Prefix.CITY, MessageType.ERROR, false);
             return;
         }
 
         if (city.getChestWatcher() != null) {
-            MessagesManager.sendMessage(player, Component.text("Le coffre est déjà ouvert"), Prefix.CITY, MessageType.ERROR, false);
+            MessagesManager.sendMessage(player, Component.translatable("omc.city.chest.already_open"), Prefix.CITY, MessageType.ERROR, false);
             return;
         }
 
@@ -46,29 +47,29 @@ public class CityChestCommand {
     void upgrade(Player player) {
         City city = CityManager.getPlayerCity(player.getUniqueId());
         if (city == null) {
-            MessagesManager.sendMessage(player, Component.text("Vous n'êtes pas dans une ville"), Prefix.CITY, MessageType.ERROR, false);
+            MessagesManager.sendMessage(player, Component.translatable("omc.city.player_no_city"), Prefix.CITY, MessageType.ERROR, false);
             return;
         }
 
         if (!city.hasPermission(player.getUniqueId(), CPermission.CHEST_UPGRADE)) {
-            MessagesManager.sendMessage(player, Component.text("Vous n'avez pas les permissions d'améliorer le coffre de la ville"), Prefix.CITY, MessageType.ERROR, false);
+            MessagesManager.sendMessage(player, Component.translatable("omc.city.chest.no_permission_upgrade"), Prefix.CITY, MessageType.ERROR, false);
             return;
         }
 
         if (city.getChestPages() >= 5) {
-            MessagesManager.sendMessage(player, Component.text("Le coffre de la Ville est déjà au niveau maximum"), Prefix.CITY, MessageType.ERROR, false);
+            MessagesManager.sendMessage(player, Component.translatable("omc.city.chest.max_level"), Prefix.CITY, MessageType.ERROR, false);
             return;
         }
 
         int price = city.getChestPages()*5000; // fonction linéaire f(x)=ax ; a=5000
         if (city.getBalance() < price) {
-            MessagesManager.sendMessage(player, Component.text("La ville n'as pas assez d'argent ("+price+" nécessaires)"), Prefix.CITY, MessageType.ERROR, false);
+            MessagesManager.sendMessage(player, Component.translatable("omc.city.chest.not_enough_money", Component.text(price), Component.text(EconomyManager.getEconomyIcon())), Prefix.CITY, MessageType.ERROR, false);
             return;
         }
 
         city.updateBalance((double) -price);
 
         city.upgradeChest();
-        MessagesManager.sendMessage(player, Component.text("Le coffre a été amélioré"), Prefix.CITY, MessageType.SUCCESS, false);
+        MessagesManager.sendMessage(player, Component.translatable("omc.city.chest.upgrade.success"), Prefix.CITY, MessageType.SUCCESS, false);
     }
 }

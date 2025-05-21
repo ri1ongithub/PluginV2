@@ -5,6 +5,8 @@ import fr.openmc.core.features.mailboxes.letter.LetterHead;
 import fr.openmc.core.features.mailboxes.utils.PaginatedMailbox;
 import fr.openmc.core.utils.CacheOfflinePlayer;
 import fr.openmc.core.utils.database.DatabaseManager;
+import net.kyori.adventure.text.Component;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -17,7 +19,7 @@ import java.util.UUID;
 public class PlayerMailbox extends PaginatedMailbox<LetterHead> {
 
     static {
-        invErrorMessage = "Erreur lors de la récupération de votre boite aux lettres.";
+        invErrorMessage = Component.translatable("omc.mailbox.error.fetch").toString();
     }
 
     public PlayerMailbox(Player player) {

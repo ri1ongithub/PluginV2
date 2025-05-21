@@ -48,32 +48,43 @@ public class CompanySearchMenu extends PaginatedMenu {
     public @NotNull List<ItemStack> getItems() {
         List<ItemStack> items = new ArrayList<>();
         for (Company company : companyManager.getCompanies()) {
-            ItemStack companyItem;
             if (companyManager.isInCompany(getOwner().getUniqueId())) {
-                companyItem = new ItemBuilder(this, company.getHead(), itemMeta -> {
-                    itemMeta.setDisplayName("§e" + company.getName());
-                    itemMeta.setLore(List.of(
-                            "§7■ Chiffre d'affaires : §a"+ company.getTurnover() + "€",
-                            "§7■ Marchants : §f" + company.getMerchants().size(),
-                            "§7■ Cliquez pour voir les informations de l'enreprise"
+                items.add(new ItemBuilder(this, company.getHead(), itemMeta -> {
+                    itemMeta.displayName(Component.text(company.getName()).color(NamedTextColor.YELLOW));
+                    itemMeta.lore(List.of(
+                        Component.text("Chiffre d'affaires : ")
+                            .color(NamedTextColor.GRAY)
+                            .append(Component.text(company.getTurnover() + "€").color(NamedTextColor.GREEN)),
+                        Component.text("Marchants : ")
+                            .color(NamedTextColor.GRAY)
+                            .append(Component.text(company.getMerchants().size()).color(NamedTextColor.WHITE)),
+                        Component.text("Cliquez pour voir les informations de l'entreprise").color(NamedTextColor.GRAY)
                     ));
-                }).setNextMenu(new CompanyMenu(getOwner(), company, true));
+                }).setNextMenu(new CompanyMenu(getOwner(), company, true)));
             } else {
-                companyItem = new ItemBuilder(this, company.getHead(), itemMeta -> {
-                    itemMeta.setDisplayName("§e" + company.getName());
-                    itemMeta.setLore(List.of(
-                            "§7■ Chiffre d'affaires : §a" + company.getTurnover() + "€",
-                            "§7■ Marchants : §f" + company.getMerchants().size(),
-                            "§7■ Candidatures : §f" + companyManager.getPendingApplications(company).size(),
-                            "§7■ Cliquez pour postuler"
+                items.add(new ItemBuilder(this, company.getHead(), itemMeta -> {
+                    itemMeta.displayName(Component.text(company.getName()).color(NamedTextColor.YELLOW));
+                    itemMeta.lore(List.of(
+                        Component.text("Chiffre d'affaires : ")
+                            .color(NamedTextColor.GRAY)
+                            .append(Component.text(company.getTurnover() + "€").color(NamedTextColor.GREEN)),
+                        Component.text("Marchants : ")
+                            .color(NamedTextColor.GRAY)
+                            .append(Component.text(company.getMerchants().size()).color(NamedTextColor.WHITE)),
+                        Component.text("Candidatures : ")
+                            .color(NamedTextColor.GRAY)
+                            .append(Component.text(companyManager.getPendingApplications(company).size()).color(NamedTextColor.WHITE)),
+                        Component.text("Cliquez pour postuler").color(NamedTextColor.GRAY)
                     ));
                 }).setOnClick((inventoryClickEvent) -> {
                     companyManager.applyToCompany(getOwner().getUniqueId(), company);
-                    getOwner().sendMessage("§aVous avez postulé pour l'entreprise " + company.getName() + " !");
-                    company.broadCastOwner("§a" + getOwner().getName() + " a postulé pour rejoindre l'entreprise !");
-                });
+                    MessagesManager.sendMessage(getOwner(),
+                        Component.translatable("omc.company.success.applied", Component.text(company.getName())), 
+                        Prefix.COMPANY, MessageType.SUCCESS, false);
+                    company.broadCastOwner(Component.translatable("omc.company.success.someone_applied", 
+                        Component.text(getOwner().getName())).toString());
+                }));
             }
-            items.add(new ItemBuilder(this, companyItem));
         }
         return items;
     }
@@ -81,23 +92,31 @@ public class CompanySearchMenu extends PaginatedMenu {
     @Override
     public Map<Integer, ItemStack> getButtons() {
         Map<Integer, ItemStack> map = new HashMap<>();
-        map.put(49, new ItemBuilder(this, CustomItemRegistry.getByName("menu:close_button").getBest(), itemMeta -> itemMeta.setDisplayName("§7Fermer"))
-                .setCloseButton());
-        map.put(48, new ItemBuilder(this, CustomItemRegistry.getByName("menu:previous_page").getBest(), itemMeta -> itemMeta.setDisplayName("§cPage précédente"))
-                .setPreviousPageButton());
-        map.put(50, new ItemBuilder(this, CustomItemRegistry.getByName("menu:next_page").getBest(), itemMeta -> itemMeta.setDisplayName("§aPage suivante"))
-                .setNextPageButton());
         if (companyManager.isInCompany(getOwner().getUniqueId())) {
             map.put(4, new ItemBuilder(this, companyManager.getCompany(getOwner().getUniqueId()).getHead(), itemMeta -> {
-                itemMeta.setDisplayName("§6§l" + companyManager.getCompany(getOwner().getUniqueId()).getName());
-                itemMeta.setLore(List.of(
-                        "§7■ - Entreprise -",
-                        "§7■ Chiffre d'affaires : §a" + companyManager.getCompany(getOwner().getUniqueId()).getTurnover() + EconomyManager.getEconomyIcon(),
-                        "§7■ Marchants : §f" + companyManager.getCompany(getOwner().getUniqueId()).getMerchants().size(),
-                        "§7■ Cliquez pour voir les informations de l'entreprise"
+                itemMeta.displayName(Component.text(companyManager.getCompany(getOwner().getUniqueId()).getName())
+                    .color(NamedTextColor.GOLD)
+                    .decorate(TextDecoration.BOLD));
+                itemMeta.lore(List.of(
+                    Component.text("- Entreprise -").color(NamedTextColor.GRAY),
+                    Component.text("Chiffre d'affaires : ")
+                        .color(NamedTextColor.GRAY)
+                        .append(Component.text(
+                            companyManager.getCompany(getOwner().getUniqueId()).getTurnover() + 
+                            EconomyManager.getEconomyIcon()).color(NamedTextColor.GREEN)),
+                    Component.text("Marchants : ")
+                        .color(NamedTextColor.GRAY)
+                        .append(Component.text(companyManager.getCompany(getOwner().getUniqueId()).getMerchants().size())
+                        .color(NamedTextColor.WHITE)),
+                    Component.text("Cliquez pour voir les informations de l'entreprise").color(NamedTextColor.GRAY)
                 ));
             }).setNextMenu(new CompanyMenu(getOwner(), companyManager.getCompany(getOwner().getUniqueId()), true)));
         }
+
+        map.put(49, new ItemBuilder(this, CustomItemRegistry.getByName("menu:close_button").getBest(), 
+            itemMeta -> itemMeta.displayName(Component.text("Fermer").color(NamedTextColor.DARK_RED)))
+            .setCloseButton());
+        
         return map;
     }
 

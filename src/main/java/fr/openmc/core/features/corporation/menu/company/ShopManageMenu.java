@@ -10,6 +10,8 @@ import fr.openmc.core.utils.api.PapiApi;
 import fr.openmc.core.utils.customitems.CustomItemRegistry;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -45,16 +47,21 @@ public class ShopManageMenu extends PaginatedMenu {
     public @NotNull List<ItemStack> getItems() {
         List<ItemStack> items = new ArrayList<>();
         for (Shop shop : company.getShops()) {
-
             List<Component> loc = new ArrayList<>();
             double x = shop.getBlocksManager().getMultiblock(shop.getUuid()).getStockBlock().getBlockX();
             double y = shop.getBlocksManager().getMultiblock(shop.getUuid()).getStockBlock().getBlockY();
             double z = shop.getBlocksManager().getMultiblock(shop.getUuid()).getStockBlock().getBlockZ();
 
-            loc.add(Component.text("§lLocation : §r x : " + x + " y : " + y + " z : " + z));
+            loc.add(Component.text("Location : ")
+                .decorate(TextDecoration.BOLD)
+                .append(Component.text("x : " + x + " y : " + y + " z : " + z)
+                    .decoration(TextDecoration.BOLD, false)));
 
-            items.add(new ItemBuilder(this, Material.BARREL , itemMeta -> {
-                itemMeta.setDisplayName("§lshop :§r" + shop.getName());
+            items.add(new ItemBuilder(this, Material.BARREL, itemMeta -> {
+                itemMeta.displayName(Component.text("shop : ")
+                    .decorate(TextDecoration.BOLD)
+                    .append(Component.text(shop.getName())
+                        .decoration(TextDecoration.BOLD, false)));
                 itemMeta.lore(loc);
             }));
         }
@@ -64,16 +71,22 @@ public class ShopManageMenu extends PaginatedMenu {
     @Override
     public Map<Integer, ItemStack> getButtons() {
         Map<Integer, ItemStack> buttons = new HashMap<>();
-        buttons.put(49, new ItemBuilder(this, CustomItemRegistry.getByName("menu:close_button").getBest(), itemMeta -> itemMeta.setDisplayName("§7Fermer"))
-                .setCloseButton());
-        ItemBuilder nextPageButton = new ItemBuilder(this, CustomItemRegistry.getByName("menu:next_page").getBest(), itemMeta -> itemMeta.setDisplayName("§aPage suivante"));
+        buttons.put(49, new ItemBuilder(this, CustomItemRegistry.getByName("menu:close_button").getBest(), itemMeta -> 
+            itemMeta.displayName(Component.text("Fermer").color(NamedTextColor.GRAY)))
+            .setCloseButton());
+
+        ItemBuilder nextPageButton = new ItemBuilder(this, CustomItemRegistry.getByName("menu:next_page").getBest(), itemMeta -> 
+            itemMeta.displayName(Component.text("Page suivante").color(NamedTextColor.GREEN)));
+
         if ((getPage() == 0 && isLastPage()) || company.getShops().isEmpty()) {
-            buttons.put(48, new ItemBuilder(this, CustomItemRegistry.getByName("menu:previous_page").getBest(), itemMeta -> itemMeta.setDisplayName("§cRetour"))
-                    .setNextMenu(new CompanyMenu(getOwner(), company, false)));
+            buttons.put(48, new ItemBuilder(this, CustomItemRegistry.getByName("menu:previous_page").getBest(), itemMeta -> 
+                itemMeta.displayName(Component.text("Retour").color(NamedTextColor.RED)))
+                .setNextMenu(new CompanyMenu(getOwner(), company, false)));
             buttons.put(50, nextPageButton);
         } else {
-            buttons.put(48, new ItemBuilder(this, CustomItemRegistry.getByName("menu:previous_page").getBest(), itemMeta -> itemMeta.setDisplayName("§cPage précédente"))
-                    .setPreviousPageButton());
+            buttons.put(48, new ItemBuilder(this, CustomItemRegistry.getByName("menu:previous_page").getBest(), itemMeta -> 
+                itemMeta.displayName(Component.text("Page précédente").color(NamedTextColor.RED)))
+                .setPreviousPageButton());
             buttons.put(50, nextPageButton.setNextPageButton());
         }
         return buttons;

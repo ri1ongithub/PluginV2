@@ -8,7 +8,6 @@ import fr.openmc.core.features.mailboxes.menu.PlayerMailbox;
 import fr.openmc.core.features.mailboxes.menu.letter.Letter;
 import fr.openmc.core.features.mailboxes.menu.letter.SendingLetter;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -44,17 +43,15 @@ public class MailboxCommand {
         OfflinePlayer receiverPlayer = Bukkit.getPlayerExact(receiver);
         if (receiverPlayer == null) receiverPlayer = Bukkit.getOfflinePlayerIfCached(receiver);
         if (receiverPlayer == null || !(receiverPlayer.hasPlayedBefore() || receiverPlayer.isOnline())) {
-            Component message = Component.text("Le joueur ", NamedTextColor.DARK_RED)
-                                         .append(Component.text(receiver, NamedTextColor.RED))
-                                         .append(Component.text(" n'existe pas ou ne s'est jamais connecté !", NamedTextColor.DARK_RED));
+            Component message = Component.translatable("omc.mailbox.player_not_found", Component.text(receiver));
             sendFailureMessage(player, message);
         } else if (receiverPlayer.getPlayer() == player) {
-            sendWarningMessage(player, "Vous ne pouvez pas vous envoyer à vous-même !");
+            sendWarningMessage(player, Component.translatable("omc.mailbox.cannot_send_self"));
         } else if (MailboxManager.canSend(player, receiverPlayer)) {
             SendingLetter sendingLetter = new SendingLetter(player, receiverPlayer, plugin);
             sendingLetter.openInventory();
         } else {
-            sendFailureMessage(player, "Vous n'avez pas les droits pour envoyer à cette personne !");
+            sendFailureMessage(player, Component.translatable("omc.mailbox.cannot_send_target"));
         }
     }
 

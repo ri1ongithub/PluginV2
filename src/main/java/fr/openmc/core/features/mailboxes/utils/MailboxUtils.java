@@ -44,9 +44,17 @@ public class MailboxUtils {
         return name.decoration(TextDecoration.ITALIC, false);
     }
 
+
+    private static Component makePrefix(Component symbol) {
+        return Component.text("[", NamedTextColor.DARK_GRAY)
+                .append(symbol)
+                .append(Component.text("] ", NamedTextColor.DARK_GRAY));
+    }
+
     public static void sendWarningMessage(Player player, Component message) {
-        Component success = Component.text("[", NamedTextColor.DARK_GRAY).append(Component.text("⚠", NamedTextColor.GOLD)).append(Component.text("] ", NamedTextColor.DARK_GRAY)).append(message);
-        player.sendMessage(success);
+        Component warning = makePrefix(Component.translatable("omc.mailbox.utils.warning_symbol").color(NamedTextColor.GOLD))
+                            .append(message);
+        player.sendMessage(warning);
     }
 
     public static void sendWarningMessage(Player player, String message) {
@@ -58,7 +66,8 @@ public class MailboxUtils {
     }
 
     public static void sendSuccessMessage(Player player, Component message) {
-        Component success = Component.text("[", NamedTextColor.DARK_GRAY).append(Component.text("✔", NamedTextColor.DARK_GREEN)).append(Component.text("] ", NamedTextColor.DARK_GRAY)).append(message);
+        Component success = makePrefix(Component.translatable("omc.mailbox.utils.success_symbol").color(NamedTextColor.DARK_GREEN))
+                            .append(message);
         player.sendMessage(success);
     }
 
@@ -67,17 +76,16 @@ public class MailboxUtils {
     }
 
     public static void sendFailureMessage(Player player, Component message) {
-        Component success = Component.text("[", NamedTextColor.DARK_GRAY).append(Component.text("❌", NamedTextColor.DARK_RED)).append(Component.text("] ", NamedTextColor.DARK_GRAY)).append(message);
-        player.sendMessage(success);
-    }
-
-    public static void sendHelp(Player sender, String message) {
-        Component finalMessage = Component.text("[", NamedTextColor.DARK_GRAY).append(Component.text("help", NamedTextColor.DARK_AQUA)).append(Component.text("] ", NamedTextColor.DARK_GRAY)).append(Component.text(message, NamedTextColor.GOLD));
-        sender.sendMessage(finalMessage);
+        Component failure = makePrefix(Component.translatable("omc.mailbox.utils.failure_symbol").color(NamedTextColor.DARK_RED))
+                            .append(message);
+        player.sendMessage(failure);
     }
 
     public static @NotNull HoverEvent<Component> getHoverEvent(String message) {
         return HoverEvent.showText(Component.text(message, NamedTextColor.GRAY));
+    }
+    public static @NotNull HoverEvent<Component> getHoverEvent(Component message) {
+        return HoverEvent.showText(message);
     }
 
     public static @NotNull ClickEvent getRunCommand(String command) {
